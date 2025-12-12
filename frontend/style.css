@@ -1,0 +1,134 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+	background-color: #eef1f5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	padding: 20px;
+}
+
+.panel {
+	background-color: #ffffff;
+	width: 100%;
+	max-width: 800px;
+	padding: 2rem;
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+	border-top: 5px solid #003366;
+}
+
+
+h1 {
+	color: #2c3e50;
+	font-size: 1.5rem;
+	margin-bottom: 2rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+
+.form-grid {
+	display: flex;
+	gap: 30px;
+	margin-bottom: 2rem;
+}
+
+
+.col-left {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+
+.col-right {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+
+label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-weight: 600;
+	color: #444;
+	font-size: 0.9rem;
+}
+
+input[type="date"],
+select,
+textarea {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 0.95rem;
+	background-color: #fafafa;
+	transition: border-color 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+	border-color: #003366;
+	background-color: #fff;
+	outline: none;
+}
+
+
+textarea {
+	resize: vertical;
+	height: 100%;
+	min-height: 110px;
+}
+
+
+.button-row {
+	display: flex;
+	gap: 15px;
+	padding-top: 1rem;
+	border-top: 1px solid #f0f0f0;
+}
+
+button {
+	padding: 12px 24px;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.95rem;
+	font-weight: 600;
+	transition: opacity 0.2s;
+}
+
+button:hover { opacity: 0.9; }
+
+.btn-create { background-color: #003366; color: white; }
+.btn-open   { background-color: #6c757d; color: white; }
+.btn-send   { background-color: #28a745; color: white; }
+
+
+.status-bar {
+	margin-top: 1rem;
+	font-size: 0.85rem;
+	color: #666;
+	text-align: right;
+}
+
+
+#console-log {
+	margin-top: 15px;
+	background: #222;
+	color: #0f0;
+	padding: 10px;
+	font-family: monospace;
+	font-size: 0.8rem;
+	border-radius: 4px;
+	display: none;
+}
