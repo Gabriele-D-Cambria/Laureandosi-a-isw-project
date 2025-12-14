@@ -1,0 +1,84 @@
+{
+	"global":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": [
+				"PROVA FINALE",
+				"TEST DI VALUTAZIONE INGEGNERIA"
+			]
+		}
+	},
+	"t-bio":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"t-ele":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"t-inf":{
+		"everyone":{
+			"no-avg": [
+				"PROVA DI LINGUA INGLESE (B1)",
+				"PROVA DI LINGUA INGLESE",
+				"PROVA DI LINGUA INGLESE B2",
+				"TIROCINIO"
+			],
+			"no-cdl": [
+				"LIBERA SCELTA PER RICONOSCIMENTI"
+			]
+		}
+	},
+	"t-tel":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-bio":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-ele":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-coe":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-aid":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-cyb":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-rob":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	},
+	"m-tel":{
+		"everyone":{
+			"no-avg": [],
+			"no-cdl": []
+		}
+	}
+}

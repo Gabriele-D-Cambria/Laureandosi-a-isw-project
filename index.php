@@ -1,6 +1,21 @@
 <?php
+    declare(strict_types=1);
+
+    require_once "./src/class/CalcoloReportistica.php";
+
     $STATO = "Stato : ";
     $status = "";
+
+    $configFile = CalcoloReportistica::getInstance();
+    
+    $corsi = $configFile->getAllCorsi();
+    $options = "";
+    foreach($corsi as $key => $corso){
+        $options .= "<option value=\"" . $corso->cdlShort . "\">";
+        $options .= $corso->cdl;
+        $options .= "</option>\n";
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -25,9 +40,7 @@
                         <label for="cdl">CdL:</label>
                         <select id="cdl">
                             <option value="" disabled selected>Seleziona un CdL</option>
-                            <option value="inf">Informatica</option>
-                            <option value="ing">Ingegneria</option>
-                            <option value="mat">Matematica</option>
+                            <?php echo $options; ?>
                         </select>
                     </div>
 
@@ -44,9 +57,9 @@
             </div>
 
             <div class="button-row">
-                <button class="btn-create" onclick="gestisciAPI('Genera')">Crea Prospetti</button>
-                <button class="btn-open" onclick="gestisciAPI('Accedi')">Apri Prospetti</button>
-                <button class="btn-send" onclick="gestisciAPI('Invia')">Invia Prospetti</button>
+                <button class="btn-create">Crea Prospetti</button>
+                <button class="btn-open">Apri Prospetti</button>
+                <button class="btn-send">Invia Prospetti</button>
             </div>
 
         </form>
