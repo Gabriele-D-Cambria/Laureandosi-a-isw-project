@@ -19,14 +19,21 @@ document.addEventListener("DOMContentLoaded", () => {
 function getFormData() {
 	const cdl = document.getElementById("cdl").value;
 	const dataLaurea = document.getElementById("dataLaurea").value;
-	const matricole = document.getElementById("matricole").value;
+	const matricoleText = document.getElementById("matricole").value;
 
-	if (!cdl || !dataLaurea || !matricole.trim()) {
-		updateStatus("Inserisci almeno una matricola", "error");
+	if (!cdl || !dataLaurea || !matricoleText.trim()) {
 		return null;
 	}
 
-	return { cdl, dataLaurea, matricole };
+	// Separa per newline e virgola, rimuove spazi e converte in numeri
+	const matricole = matricoleText
+		.split(/[\n,]+/)
+		.map(m => m.trim())
+		.filter(m => m !== "")
+		.map(m => Number(m))
+		.filter(m => !isNaN(m));
+
+	return { cdl, dataLaurea, matricole: JSON.stringify(matricole) };
 }
 
 /**

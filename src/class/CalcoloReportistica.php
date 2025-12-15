@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . "/../includes/definitions.php";
+
 class ParametroRange{
 	public function __construct(
 		public readonly float $min,
@@ -62,7 +64,7 @@ class CalcoloReportistica{
 	}
 
 	private function loadConfig(): void{
-		$configPath = __DIR__ . "/../../config/calcolo_reportistica.json";
+		$configPath = CONFIG_PATH . "/calcolo_reportistica.json";
 
 		if(!file_exists($configPath)){
 			throw new Exception("File di configurazione non trovato: " . $configPath);
