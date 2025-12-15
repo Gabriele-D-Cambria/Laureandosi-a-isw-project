@@ -57,9 +57,9 @@
             </div>
 
             <div class="button-row">
-                <button class="btn-create">Crea Prospetti</button>
-                <button class="btn-open">Apri Prospetti</button>
-                <button class="btn-send">Invia Prospetti</button>
+                <button type="button" id="btn-create" class="btn-create">Crea Prospetti</button>
+                <button type="button" id="btn-open" class="btn-open">Apri Prospetti</button>
+                <button type="button" id="btn-send" class="btn-send">Invia Prospetti</button>
             </div>
 
         </form>
