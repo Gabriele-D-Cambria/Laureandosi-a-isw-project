@@ -24,6 +24,10 @@ if(empty($cdl) || empty($dataLaurea) || count($matricole) === 0 || empty($reques
 	send_error(400, ["error" => true, "message" => "Dati mancanti o non validi"]);
 }
 
+if(is_numeric($matricole)){
+	$matricole = [$matricole];
+}
+
 try {
 	switch($requestType){
 		case "create":

@@ -64,13 +64,13 @@ class CalcoloReportistica{
 	}
 
 	private function loadConfig(): void{
-		$configPath = CONFIG_PATH . "/calcolo_reportistica.json";
+		$filePath = CONFIG_PATH . "/calcolo_reportistica.json";
 
-		if(!file_exists($configPath)){
-			throw new Exception("File di configurazione non trovato: " . $configPath);
+		if(!file_exists($filePath)){
+			throw new Exception("File di configurazione non trovato: " . $filePath);
 		}
 
-		$jsonContent = file_get_contents($configPath);
+		$jsonContent = file_get_contents($filePath);
 		$this->config = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
 
 		foreach ($this->config['corsi'] as $key => $corsoData) {

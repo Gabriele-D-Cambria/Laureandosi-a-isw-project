@@ -40,6 +40,10 @@ class ProspettoCommissione{
 				$this->clearDirectory($cdlDirectoryPath);
 			}
 		}
+
+		foreach($matricole as $matricola){
+			$prospettoLaureando = new ProspettoLaureando($matricola, $cdl, $dataLaurea);
+		}
 	}
 
 	private function clearDirectory(string $path): void {
