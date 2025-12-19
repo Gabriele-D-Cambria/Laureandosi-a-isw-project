@@ -6,7 +6,17 @@ class GestioneCarrieraStudente{
 
 	public static function restituisciAnagraficaStudente(int $matricola): string{
 		// FIXME rimuovi l'esempio hardcoded
-		return '{"Entries":{"Entry":{"nome":"PINCO","cognome":"PALLINO","cod_fis":"ABCDEFX12X12X123X","data_nascita":"1999-05-01T00:00:00.000+01:00","email_ate":"p.pallino@studenti.unipi.it"}}}';
+		return '{
+  "Entries": {
+    "Entry": {
+      "nome": "GIANLUIGI",
+      "cognome": "DONNARUMMA",
+      "cod_fis": "ABCDEFX12X12X123X",
+      "data_nascita": "1997-06-14T00:00:00.000+02:00",
+      "email_ate": "nome.cognome@studenti.unipi.it"
+    }
+  }
+}';
 	}
 	
 	public static function restituisciCarrieraStudente(int $matricola): string{

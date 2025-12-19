@@ -5,8 +5,7 @@ declare(strict_types=1);
 require_once __DIR__ . "/CalcoloReportistica.php";
 
 class Esame{
-	// FIXME: Constant expression contains invalid operations
-	public static int $lode = CalcoloReportistica::getInstance()->getLode();
+	private static ?int $lode = null;
 	public string $nome;
 	public int $voto;
 	public int $cfu;
@@ -23,9 +22,16 @@ class Esame{
 		$this->faMedia = $faMedia;
 		
 		$this->voto = match($esameJSON["VOTO"]) {
-			"30L" => Esame::$lode,
+			"30L" => Esame::getLode(),
 			null => 0,
 			default => (int)$esameJSON["VOTO"]
 		};
+	}
+
+	public static function getLode(){
+		if(self::$lode === null){
+			self::$lode = CalcoloReportistica::getInstance()->getLode();
+		}
+		return self::$lode;
 	}
 }

@@ -12,7 +12,7 @@ class AnagraficaLaureando{
 	public function __construct(int $matricola) {
 		$rawResult = json_decode(GestioneCarrieraStudente::restituisciAnagraficaStudente($matricola));
 		
-		$student = $rawResult->Entries->student;
+		$student = $rawResult->Entries->Entry;
 
 		$this->nome = $student->nome;
 		$this->cognome = $student->cognome;

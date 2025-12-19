@@ -28,14 +28,15 @@ class CorsoLaurea{
 		public readonly string $cdl,
         public readonly string $cdlAlt,
         public readonly string $cdlShort,
-        public readonly string $votoLaurea,
+        public readonly string $formulaLaurea,
         public readonly int $totCFU,
         public readonly ParametroRange $parT,
-        public readonly ParametroRange $parC
+        public readonly ParametroRange $parC,
+		public readonly bool $forceThesisValue
 	){}
 
 	public function calcolaVotoLaurea(float $M, int $CFU, float $T = 0, float $C = 0) : float {
-		$formula = str_replace(['M', 'CFU', 'T', 'C'], [$M, $CFU, $T, $C], $this->votoLaurea);
+		$formula = str_replace(['M', 'CFU', 'T', 'C'], [$M, $CFU, $T, $C], $this->formulaLaurea);
 
 		try{
 			$result = eval("return $formula;");
@@ -78,7 +79,7 @@ class CalcoloReportistica{
                 cdl: $corsoData['cdl'],
                 cdlAlt: $corsoData['cdl-alt'],
                 cdlShort: $corsoData['cdl-short'],
-                votoLaurea: $corsoData['voto-laurea'],
+                formulaLaurea: $corsoData['formula-laurea'],
                 totCFU: $corsoData['tot-CFU'],
                 parT: new ParametroRange(
                     min: $corsoData['par-T']['min'],
@@ -89,7 +90,8 @@ class CalcoloReportistica{
                     min: $corsoData['par-C']['min'],
                     max: $corsoData['par-C']['max'],
                     step: $corsoData['par-C']['step']
-                )
+				),
+				forceThesisValue: $corsoData['force-thesis-value']
             );
 		}
 		unset($this->config['corsi']);
@@ -114,4 +116,8 @@ class CalcoloReportistica{
     public function getNotaFinale(): string {
         return $this->config['nota-finale'];
     }
+
+	public function getDocTitle() : string{
+		return $this->config['doc-title'];
+	}
 }
