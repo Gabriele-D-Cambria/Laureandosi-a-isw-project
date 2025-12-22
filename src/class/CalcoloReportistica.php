@@ -10,13 +10,13 @@ class ParametroRange{
         public readonly float $step){}
 	
 	public function isActive() : bool{
-		return $this->max > 0;
+		return $this->step > 0;
 	}
 
 	public function getValues() : array {
 		$values = [];
 		if($this->isActive()){
-			for($i = $this->min; $this <= $this->max; $i += $this->step)
+			for($i = $this->min; $i <= $this->max; $i += $this->step)
 				$values[] = $i;
 		}
 		return $values;
@@ -32,7 +32,8 @@ class CorsoLaurea{
         public readonly int $totCFU,
         public readonly ParametroRange $parT,
         public readonly ParametroRange $parC,
-		public readonly bool $forceThesisValue
+		public readonly bool $forceThesisValue,
+		private readonly String $notaFinale
 	){}
 
 	public function calcolaVotoLaurea(float $M, int $CFU, float $T = 0, float $C = 0) : float {
@@ -45,6 +46,16 @@ class CorsoLaurea{
 		catch(Throwable $e){
 			throw new Exception("Errore nel calcolo della formula: ". $e->getMessage());
 		}
+	}
+
+	/**
+	 * Restituisce la nota finale sostituendo gli eventuali campi `"MIN"` e `"MAX"` con i valori effettivi del parametro NON ATTIVO
+	 * @return string nota finale formattata
+	 */
+	public function getNotaFinale(): string{
+		$parameter = ($this->parC->isActive())? $this->parT : $this->parC;
+
+		return str_replace(["MIN", "MAX"], [$parameter->min, $parameter->max], $this->notaFinale);
 	}
 }
 
@@ -82,16 +93,17 @@ class CalcoloReportistica{
                 formulaLaurea: $corsoData['formula-laurea'],
                 totCFU: $corsoData['tot-CFU'],
                 parT: new ParametroRange(
-                    min: $corsoData['par-T']['min'],
-                    max: $corsoData['par-T']['max'],
-                    step: $corsoData['par-T']['step']
+                    min: (float)$corsoData['par-T']['min'],
+                    max: (float)$corsoData['par-T']['max'],
+                    step: (float)$corsoData['par-T']['step']
                 ),
                 parC: new ParametroRange(
-                    min: $corsoData['par-C']['min'],
-                    max: $corsoData['par-C']['max'],
-                    step: $corsoData['par-C']['step']
+                    min: (float)$corsoData['par-C']['min'],
+                    max: (float)$corsoData['par-C']['max'],
+                    step: (float)$corsoData['par-C']['step']
 				),
-				forceThesisValue: $corsoData['force-thesis-value']
+				forceThesisValue: $corsoData['force-thesis-value'],
+				notaFinale: $corsoData['nota-finale']
             );
 		}
 		unset($this->config['corsi']);
@@ -112,12 +124,12 @@ class CalcoloReportistica{
 	public function getTestoEmail(): string {
         return $this->config['txt-email'];
     }
-    
-    public function getNotaFinale(): string {
-        return $this->config['nota-finale'];
-    }
 
 	public function getDocTitle() : string{
 		return $this->config['doc-title'];
+	}
+
+	public function getInfoTitle() : string{
+		return $this->config['info-title'];
 	}
 }

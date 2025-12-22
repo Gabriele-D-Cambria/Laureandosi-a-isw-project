@@ -52,8 +52,6 @@ class ProspettoLaureando{
 
 		$this->prospettoPDF->Output($path . "/" . $nomeFile, "F");
 		
-		//$this->prospettoPDF->Output($nomeFile, "I");
-
 		return $html;
 	}
 

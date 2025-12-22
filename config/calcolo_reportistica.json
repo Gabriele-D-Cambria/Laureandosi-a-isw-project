@@ -16,7 +16,8 @@
         "max": 0,
         "step": 0
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+      "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto di tesi, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "t-ele": {
       "cdl": "T. Ing. Elettronica",
@@ -34,7 +35,8 @@
         "max": 0,
         "step": 0
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+      "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto di tesi, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "t-inf": {
       "cdl": "T. Ing. Informatica",
@@ -44,7 +46,7 @@
       "tot-CFU": 177,
       "par-T": {
         "min": 0,
-        "max": 0,
+        "max": 3,
         "step": 0
       },
       "par-C": {
@@ -52,7 +54,8 @@
         "max": 7,
         "step": 1
       },
-      "force-thesis-value": true
+      "force-thesis-value": true,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea e somma il voto di tesi tra MIN e MAX, quindi arrotonda"
     },
     "t-tel": {
       "cdl": "T. Ing. delle Telecomunicazioni",
@@ -70,10 +73,11 @@
         "max": 11,
         "step": 1
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "m-bio": {
-      "cdl": "M. Ing. Biomedica",
+      "cdl": "M. Ing. Biomedica, Bionics Engineering",
       "cdl-alt": "INGEGNERIA BIOMEDICA (WIB-LM)",
       "cdl-short": "m-bio",
       "formula-laurea": "M*3.5+11+C",
@@ -88,7 +92,8 @@
         "max": 4.0,
         "step": 0.5
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "m-ele": {
       "cdl": "M. Ing. Elettronica",
@@ -106,7 +111,8 @@
         "max": 0,
         "step": 0
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+      "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto di tesi, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "m-coe": {
       "cdl": "M. Computer Engineering",
@@ -116,7 +122,7 @@
       "tot-CFU": 96,
       "par-T": {
         "min": 0,
-        "max": 0,
+        "max": 3,
         "step": 0
       },
       "par-C": {
@@ -124,7 +130,8 @@
         "max": 3,
         "step": 1
       },
-      "force-thesis-value": true
+      "force-thesis-value": true,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea e somma il voto di tesi tra MIN e MAX, quindi arrotonda"
     },
     "m-aid": {
       "cdl": "M. Artificial Intelligence and Data Enginering",
@@ -134,7 +141,7 @@
       "tot-CFU": 96,
       "par-T": {
         "min": 0,
-        "max": 0,
+        "max": 3,
         "step": 0
       },
       "par-C": {
@@ -142,7 +149,8 @@
         "max": 3,
         "step": 1
       },
-      "force-thesis-value": true
+      "force-thesis-value": true,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea e somma il voto di tesi tra MIN e MAX, quindi arrotonda"
     },
     "m-cyb": {
       "cdl": "M. Cybersecurity",
@@ -160,7 +168,8 @@
         "max": 7,
         "step": 1
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "m-rob": {
       "cdl": "M. Ing. Robotica e della Automazione",
@@ -178,7 +187,8 @@
         "max": 0,
         "step": 0
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+      "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto di tesi, prendi il corrispondente voto di laurea ed arrotonda"
     },
     "m-tel": {
       "cdl": "M. Ing. delle Telecomunicazioni",
@@ -196,11 +206,12 @@
         "max": 11,
         "step": 1
       },
-      "force-thesis-value": false
+      "force-thesis-value": false,
+	  "nota-finale": "VOTO DI LAUREA FINALE: scegli il voto commissione, prendi il corrispondente voto di laurea ed arrotonda"
     }
   },
   "lode": 33,
+  "info-title": "LAUREANDOSI 2 - Progettazione: mario.cimino@unipi.it, Amministrazione: rose.rossiello@unipi.it",
   "doc-title": "CARRIERA E SIMULAZIONE DEL VOTO DI LAUREA",
-  "txt-email": "Gentile laureando/laureanda,\nAllego un prospetto contenente: la sua carriera, gli indicatori e la formula che la commissione adopererà perdeterminare il voto di laurea.\nLa prego di prendere visione dei dati relativi agli esami.\nIn caso di dubbi scrivere a: vittoria.dattilo@unipi.it\n\nAlcune spiegazioni:\n- gli esami che non hanno un voto in trentesimi, hanno voto nominale zero al posto di giudizio o idoneita', inquanto non contribuiscono al calcolo della media ma solo al numero di crediti curriculari;\n- gli esami che non fanno media (pur contribuendo ai crediti curriculari) non hanno la spunta nella colonna MED;\n- il voto di tesi (T) appare nominalmente a zero in quanto verra' determinato in sede di laurea, e va da 18 a 30. \n\nCordiali saluti \nUnità Didattica DII",
-  "nota-finale": "VOTO DI LAUREA FINALE: scegli voto commissione, prendi il corrispondente voto di laurea e somma il voto di tesi tra 1 e 3, quindi arrotonda"
+  "txt-email": "Gentile laureando/laureanda,\nAllego un prospetto contenente: la sua carriera, gli indicatori e la formula che la commissione adopererà perdeterminare il voto di laurea.\nLa prego di prendere visione dei dati relativi agli esami.\nIn caso di dubbi scrivere a: vittoria.dattilo@unipi.it\n\nAlcune spiegazioni:\n- gli esami che non hanno un voto in trentesimi, hanno voto nominale zero al posto di giudizio o idoneita', inquanto non contribuiscono al calcolo della media ma solo al numero di crediti curriculari;\n- gli esami che non fanno media (pur contribuendo ai crediti curriculari) non hanno la spunta nella colonna MED;\n- il voto di tesi (T) appare nominalmente a zero in quanto verra' determinato in sede di laurea, e va da 18 a 30. \n\nCordiali saluti \nUnità Didattica DII"
 }

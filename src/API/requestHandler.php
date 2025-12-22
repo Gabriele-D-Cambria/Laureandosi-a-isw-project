@@ -10,6 +10,8 @@ function send_error($error, $message): never{
 	exit();
 }
 
+header('Content-Type: application/json; charset=utf-8');
+
 if(!isset($_SERVER['REQUEST_METHOD']) || $_SERVER['REQUEST_METHOD'] !== "POST"){
 	send_error(401, ["error" => true, "message" => "Not authorized"]);
 }
@@ -49,6 +51,5 @@ try {
 	send_error(500, ["error" => true, "message" => "Errore del server: " . $e->getMessage()]);
 }
 
-header('Content-Type: application/json; charset=utf-8');
 echo json_encode($esito);
 exit();
