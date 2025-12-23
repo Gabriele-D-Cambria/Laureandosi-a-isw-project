@@ -5,25 +5,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		sendRequest(e, "create");
 	});
 	document.getElementById("btn-open").addEventListener("click", (e) => {
-		sendRequest_P(e, "open");
+		sendRequest(e, "open");
 	});
 	document.getElementById("btn-send").addEventListener("click", (e) => {
-		sendRequest_P(e, "send");
+		sendRequest(e, "send");
 	});
 });
 
 /**
  * Raccoglie e valida i dati dal form
- * @returns {Object|null} Oggetto con i dati del form o null se non validi
+ * @returns {Object} Oggetto con i dati del form o null se non validi
  */
 function getFormData() {
 	const cdl = document.getElementById("cdl").value;
 	const dataLaurea = document.getElementById("dataLaurea").value;
 	const matricoleText = document.getElementById("matricole").value;
-
-	if (!cdl || !dataLaurea || !matricoleText.trim()) {
-		return null;
-	}
 
 	// Separa per newline e virgola, rimuove spazi e converte in numeri
 	const matricole = matricoleText
@@ -49,6 +45,10 @@ function updateStatus(message, type = "info") {
 		statusText.textContent = message;
 		statusBar.className = "status-bar status-" + type;
 	}
+
+	if(type == "success"){
+		document.getElementById("form").reset();
+	}
 }
 
 /**
@@ -65,16 +65,6 @@ function sendRequest(e, requestType) {
 	data.append("dataLaurea", formData.dataLaurea);
 	data.append("matricole", formData.matricole);
 
-	let successMessage = "";
-
-	switch(requestType){
-		case "create":
-			successMessage = "Prospetti Creati";
-			break;
-		case "open":
-			successMessage = "Prospetti Aperti in un'altra pagina";
-			break;
-	}
 
 	if(requestType === "send"){
 		let sentMessages = -1;
@@ -101,12 +91,23 @@ function sendRequest(e, requestType) {
 		return response.json();
 	})
 	.then(result => {
-		updateStatus(result.message || successMessage, "success");
+		if(result.error){
+			throw new Error(result.message);
+		}
+		updateStatus(result.message, "success");
+		if(requestType == "open"){
+			if(!window.open(result.pdf_url, '_blank')){
+				if(confirm("Il browser ha bloccato l'apertura automatica. Vuoi aprire il file qui?")) {
+					window.location.href = result.pdf_url;
+				}
+			}
+		}
 		return result;
 	})
 	.catch(error => {
 		console.error("Errore:", error);
 		updateStatus(error.message || "Errore di connessione", "error");
 		return null;
-	});
+	})
+
 }

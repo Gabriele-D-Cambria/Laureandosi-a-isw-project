@@ -32,7 +32,7 @@
     <div class="panel">
         <h1>Gestione Prospetti di Laurea</h1>
 
-        <form method="POST" action="">
+        <form method="POST" action="" id="form">
             
             <div class="form-grid">
                 <div class="col-left">

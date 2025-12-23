@@ -109,6 +109,11 @@ class CalcoloReportistica{
 		unset($this->config['corsi']);
 	}
 
+	/**
+	 * Restituisce le informazioni di un corso a partire dalla sua sigla
+	 * @param string $cdlShort sigla del corso
+	 * @return ?CorsoLaurea un istanza `CorsoLaurea` se esiste, `null` altrimenti
+	 */
 	public function getCorso(string $cdlShort) : ?CorsoLaurea {
 		return $this->corsi[$cdlShort] ?? null;
 	}

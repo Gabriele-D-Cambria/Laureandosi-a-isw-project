@@ -22,8 +22,8 @@ $matricole = json_decode($_POST['matricole'] ?? '[]', true) ?? [];
 $requestType = $_POST['request-type'] ?? '';
 
 // Validazione base
-if(empty($cdl) || empty($dataLaurea) || count($matricole) === 0 || empty($requestType)){
-	send_error(400, ["error" => true, "message" => "Dati mancanti o non validi"]);
+if(empty($requestType)){
+	send_error(400, ["error" => true, "message" => "Tipo richiesta non definito"]);
 }
 
 if(is_numeric($matricole)){
@@ -33,16 +33,13 @@ if(is_numeric($matricole)){
 try {
 	switch($requestType){
 		case "create":
-			$result = GeneratoreProspettiLaurea::GeneraProspettoLaureando($cdl, $dataLaurea, $matricole);
-			$esito = ["error" => false, "message" => "Prospetti creati con successo", "data" => $result];
+			$esito = GeneratoreProspettiLaurea::GeneraProspettoLaureando($cdl, $dataLaurea, $matricole);
 			break;
 		case "open":
-			$result = GeneratoreProspettiLaurea::AccediProspettoLaureando();
-			$esito = ["error" => false, "message" => "Prospetti aperti con successo", "data" => $result];
+			$esito = GeneratoreProspettiLaurea::AccediProspettoLaureando($cdl);
 			break;
 		case "send":
-			$result = GeneratoreProspettiLaurea::InviaProspettoLaureando();
-			$esito = ["error" => false, "message" => "Prospetti inviati con successo", "data" => $result];
+			$esito = GeneratoreProspettiLaurea::InviaProspettoLaureando();
 			break;
 		default:
 			send_error(400, ["error" => true, "message" => "Tipo di richiesta non valido"]);
