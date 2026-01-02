@@ -13,7 +13,7 @@ class GestioneCarrieraStudente{
       "cognome": "DONNARUMMA",
       "cod_fis": "ABCDEFX12X12X123X",
       "data_nascita": "1997-06-14T00:00:00.000+02:00",
-      "email_ate": "nome.cognome@studenti.unipi.it"
+      "email_ate": "g.cambria3@studenti.unipi.it"
     }
   }
 }';

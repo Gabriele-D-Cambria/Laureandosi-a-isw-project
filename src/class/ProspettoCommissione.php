@@ -89,7 +89,10 @@ class ProspettoCommissione extends ProspettoPDF{
 		$info = [];
 
 		for($i = 0; $i < count($this->anagraficheLaureandi); ++$i){
-			$info[$this->titoliProspetti[$i]] = $this->anagraficheLaureandi[$i]->email;
+			$info[] = [
+				"fileName" 	=> $this->titoliProspetti[$i],
+				"email" => $this->anagraficheLaureandi[$i]->email
+			];
 		}
 
 		$data = [
@@ -98,6 +101,6 @@ class ProspettoCommissione extends ProspettoPDF{
 		];
 
 		$jsonContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS);
-		file_put_contents($path . "/lista_prospetti_da_inviare.json", $jsonContent);
+		file_put_contents($path . SEND_LOG_FILE_NAME, $jsonContent);
 	}
 }

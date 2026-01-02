@@ -46,7 +46,7 @@ function updateStatus(message, type = "info") {
 		statusBar.className = "status-bar status-" + type;
 	}
 
-	if(type == "success"){
+	if (type == "success") {
 		document.getElementById("form").reset();
 	}
 }
@@ -62,22 +62,21 @@ function sendRequest(e, requestType) {
 	const data = new FormData();
 	data.append("request-type", requestType);
 	data.append("cdl", formData.cdl);
-	data.append("dataLaurea", formData.dataLaurea);
-	data.append("matricole", formData.matricole);
 
-
-	if(requestType === "send"){
-		let sentMessages = -1;
-		let totalMessages = 0;
-
-		do{
-			// TODO: implementa le richieste iterative
-			successMessage = `Inviato Prospetto n° ${sentMessages} di ${totalMessages}`;
-		}while(sentMessages < totalMessages);
-
-		return "";
+	switch(requestType) {
+		case "create":
+			data.append("dataLaurea", formData.dataLaurea);
+			data.append("matricole", formData.matricole);
+			break;
+		case "open":
+			break;
+		case "send":
+			processBatchMail(formData);
+			return;
+		default:
+			return;
 	}
-	
+
 	return fetch("src/API/requestHandler.php", {
 		method: "POST",
 		body: data
@@ -91,13 +90,13 @@ function sendRequest(e, requestType) {
 		return response.json();
 	})
 	.then(result => {
-		if(result.error){
+		if (result.error) {
 			throw new Error(result.message);
 		}
 		updateStatus(result.message, "success");
-		if(requestType == "open"){
-			if(!window.open(result.pdf_url, '_blank')){
-				if(confirm("Il browser ha bloccato l'apertura automatica. Vuoi aprire il file qui?")) {
+		if (requestType == "open") {
+			if (!window.open(result.pdf_url, '_blank')) {
+				if (confirm("Il browser ha bloccato l'apertura automatica. Vuoi aprire il file qui?")) {
 					window.location.href = result.pdf_url;
 				}
 			}
@@ -110,4 +109,49 @@ function sendRequest(e, requestType) {
 		return null;
 	})
 
+}
+
+/**
+ * Funzione helper ricorsiva per l'invio sequenziale
+ * @param {FormData} formData form da inviare
+ */
+async function processBatchMail(formData) {
+	const data = new FormData();
+	data.append("request-type", "send");
+	data.append("cdl", formData.cdl);
+
+	updateStatus("Invio mail in corso...", "loading");
+
+	try {
+		const response = await fetch("src/API/requestHandler.php", {
+			method: "POST",
+			body: data
+		});
+
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.message || "Errore nella richiesta");
+		}
+
+		const result = await response.json();
+
+		if (result.error) {
+			throw new Error(result.message);
+		}
+
+		if (result.finished) {
+			updateStatus(result.message, "success");
+			return;
+		}
+		else{
+			updateStatus(result.message, "loading");
+
+			await processBatchMail(data);
+		}
+	} 
+	catch (error) {
+		console.error("Errore:", error);
+		updateStatus(error.message || "Errore di connessione", "error");
+		return null;
+	}
 }

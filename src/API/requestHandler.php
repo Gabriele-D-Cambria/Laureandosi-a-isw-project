@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . "/../class/GeneratoreProspettiLaurea.php";
 
-function send_error($error, $message): never{
-	http_response_code($error);
+function send_error($response_code, $message): never{
+	http_response_code($response_code);
     header('Content-Type: application/json; charset=utf-8');
 	echo json_encode($message);
 	exit();
@@ -39,7 +39,8 @@ try {
 			$esito = GeneratoreProspettiLaurea::AccediProspettoLaureando($cdl);
 			break;
 		case "send":
-			$esito = GeneratoreProspettiLaurea::InviaProspettoLaureando();
+			$esito = GeneratoreProspettiLaurea::InviaProspettoLaureando($cdl);
+			sleep(13);
 			break;
 		default:
 			send_error(400, ["error" => true, "message" => "Tipo di richiesta non valido"]);

@@ -59,10 +59,29 @@ class CorsoLaurea{
 	}
 }
 
+class MailInfo {
+	public readonly string $subject;
+
+	public function __construct(
+		public readonly string $host,
+		public readonly string $fromName,
+		public readonly string $fromMail,
+		public readonly string $body,
+		string $subject,
+		?string $cdl
+	){
+		$this->subject = ($cdl == null) 
+			? $subject 
+			: str_replace("INSERISCI_CDL", $cdl, $subject);
+	}
+
+}
+
 class CalcoloReportistica{
 	private static ?CalcoloReportistica $instance = null;
 	private array $config;
 	private array $corsi = [];
+	private MailInfo $genericMailInfo;
 
 	private function __construct() {
 		$this->loadConfig();
@@ -106,7 +125,19 @@ class CalcoloReportistica{
 				notaFinale: $corsoData['nota-finale']
             );
 		}
+		
 		unset($this->config['corsi']);
+
+		$this->genericMailInfo = new MailInfo(
+			host: $this->config['email']['host'],
+			fromName: $this->config['email']['from-name'],
+			fromMail: $this->config['email']['from-mail'],
+			body: stripslashes($this->config['email']['body']),
+			subject: $this->config['email']['subject'],
+			cdl: null
+		);
+
+		unset($this->config['email']);
 	}
 
 	/**
@@ -126,10 +157,6 @@ class CalcoloReportistica{
 		return $this->config['lode'];
 	}
 
-	public function getTestoEmail(): string {
-        return $this->config['txt-email'];
-    }
-
 	public function getDocTitle() : string{
 		return $this->config['doc-title'];
 	}
@@ -137,4 +164,22 @@ class CalcoloReportistica{
 	public function getInfoTitle() : string{
 		return $this->config['info-title'];
 	}
+	
+	public function getMailInfo(?string $shortCdl = null): MailInfo {
+		if($shortCdl == null)
+        	return $this->genericMailInfo;
+
+		if(($corso = $this->getCorso($shortCdl)) == null){
+			return $this->genericMailInfo;
+		}
+		
+		return new MailInfo(
+			host: $this->genericMailInfo->host,
+			fromName: $this->genericMailInfo->fromName,
+            fromMail: $this->genericMailInfo->fromMail,
+			body: $this->genericMailInfo->body,
+			subject: $this->genericMailInfo->subject,
+			cdl: $corso->cdl
+		);
+    }
 }
