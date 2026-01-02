@@ -1,19 +1,31 @@
 <?php
-    declare(strict_types=1);
 
-    require_once "./src/class/CalcoloReportistica.php";
+declare(strict_types=1);
 
-    $STATO = "Stato : ";
-    $status = "";
+require_once "./src/includes/definitions.php";
 
-    $configFile = CalcoloReportistica::getInstance();
-    
-    $corsi = $configFile->getAllCorsi();
-    $options = "";
-    foreach($corsi as $key => $corso){
-        $options .= "<option value=\"" . $corso->cdlShort . "\">";
-        $options .= $corso->cdl;
-        $options .= "</option>\n";
+if(TEST_MODE) {
+    require_once "./src/test/test_page.php";
+    exit;
+}
+
+require_once "./src/test/UnitTest.php";
+
+UnitTest::cleanOutputDirectory();
+
+require_once "./src/class/CalcoloReportistica.php";
+
+$STATO = "Stato : ";
+$status = "";
+
+$configFile = CalcoloReportistica::getInstance();
+
+$corsi = $configFile->getAllCorsi();
+$options = "";
+foreach($corsi as $key => $corso){
+    $options .= "<option value=\"" . $corso->cdlShort . "\">";
+    $options .= $corso->cdl;
+    $options .= "</option>\n";
     }
 
 ?>

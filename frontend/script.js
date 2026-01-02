@@ -1,5 +1,7 @@
 "use strict";
 
+const API_URL = "src/API/requestHandler.php";
+
 document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("btn-create").addEventListener("click", (e) => {
 		sendRequest(e, "create");
@@ -23,7 +25,7 @@ function getFormData() {
 
 	// Separa per newline e virgola, rimuove spazi e converte in numeri
 	const matricole = matricoleText
-		.split(/[\n,]+/)
+		.split(/[\n, ]+/)
 		.map(m => m.trim())
 		.filter(m => m !== "")
 		.map(m => Number(m))
@@ -46,7 +48,7 @@ function updateStatus(message, type = "info") {
 		statusBar.className = "status-bar status-" + type;
 	}
 
-	if (type == "success") {
+	if (type === "success") {
 		document.getElementById("form").reset();
 	}
 }
@@ -71,13 +73,14 @@ function sendRequest(e, requestType) {
 		case "open":
 			break;
 		case "send":
+			updateStatus("Invio mail in corso...", "loading");
 			processBatchMail(formData);
 			return;
 		default:
 			return;
 	}
 
-	return fetch("src/API/requestHandler.php", {
+	return fetch(API_URL, {
 		method: "POST",
 		body: data
 	})
@@ -120,10 +123,10 @@ async function processBatchMail(formData) {
 	data.append("request-type", "send");
 	data.append("cdl", formData.cdl);
 
-	updateStatus("Invio mail in corso...", "loading");
+	
 
 	try {
-		const response = await fetch("src/API/requestHandler.php", {
+		const response = await fetch(API_URL, {
 			method: "POST",
 			body: data
 		});
@@ -146,7 +149,7 @@ async function processBatchMail(formData) {
 		else{
 			updateStatus(result.message, "loading");
 
-			await processBatchMail(data);
+			await processBatchMail(formData);
 		}
 	} 
 	catch (error) {

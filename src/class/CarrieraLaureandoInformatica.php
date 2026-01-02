@@ -11,7 +11,7 @@ class CarrieraLaureandoInformatica extends CarrieraLaureando{
 	public ?int $annoImmatricolazione = null;
 	public float $mediaInformatica = 0;
 
-	public function __construct(int $matricola, string $cdl, string $dataLaurea) {
+	public function __construct(int|string $matricola, string $cdl, string $dataLaurea) {
 		$this->matricola = $matricola;
 		$this->cdl = $cdl;
 		$this->dataLaurea = new DateTime($dataLaurea);

@@ -7,7 +7,7 @@ require_once __DIR__ . "/GestioneCarrieraStudente.php";
 require_once __DIR__ . "/FiltroEsami.php";
 
 class CarrieraLaureando{
-	public int $matricola;
+	public int|string $matricola;
 	public string $cdl;
 	public DateTime $dataLaurea;
 	public array $esami;
@@ -15,7 +15,7 @@ class CarrieraLaureando{
 	public int $cfuMedia = 0;
 	public float $mediaPesata = 0;
 
-	public function __construct(int $matricola, string $cdl, string $dataLaurea) {
+	public function __construct(int|string $matricola, string $cdl, string $dataLaurea) {
 		$this->matricola = $matricola;
 		$this->cdl = $cdl;
 		$this->dataLaurea = new DateTime($dataLaurea);

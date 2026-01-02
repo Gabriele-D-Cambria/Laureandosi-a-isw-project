@@ -23,6 +23,7 @@ class Esame{
 		
 		$this->voto = match($esameJSON["VOTO"]) {
 			"30L" => Esame::getLode(),
+			"30  e lode" => Esame::getLode(),
 			null => 0,
 			default => (int)$esameJSON["VOTO"]
 		};

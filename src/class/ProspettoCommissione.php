@@ -26,7 +26,8 @@ class ProspettoCommissione extends ProspettoPDF{
 		if(!is_dir($cdlDirectoryPath)){
 			mkdir($cdlDirectoryPath, 0755);
 		}
-		else{
+		// Se sono in modalità test non svuoto la cartella ad ogni generazione, poiché vorrò vedere i risultati alla fine
+		else if (!TEST_MODE) {
 			$files = array_diff(scandir($cdlDirectoryPath), ['.', '..']);
 
 			if(count($files) > 0){
@@ -49,19 +50,25 @@ class ProspettoCommissione extends ProspettoPDF{
 			$pagineLaureandiHtml[] = $prospettoLaureandoHtml . $simulationBlock;
 		}
 
-		$listPageHtml = $this->getListPage($corso, $this->anagraficheLaureandi);
+		// Se sono in modalità test non salvo il prospetto generale
+		if (!TEST_MODE) {
 
-		$this->prospettoPDF->WriteHTML($this->styleBlock);
-		$this->prospettoPDF->WriteHTML($listPageHtml);
+			$listPageHtml = $this->getListPage($corso, $this->anagraficheLaureandi);
 
-		foreach($pagineLaureandiHtml as $paginaHtml){
-			$this->prospettoPDF->AddPage();
-			$this->prospettoPDF->WriteHTML($paginaHtml);
+			$this->prospettoPDF->WriteHTML($this->styleBlock);
+			$this->prospettoPDF->WriteHTML($listPageHtml);
+
+			foreach($pagineLaureandiHtml as $paginaHtml){
+				$this->prospettoPDF->AddPage();
+				$this->prospettoPDF->WriteHTML($paginaHtml);
+			}
+
+			$this->prospettoPDF->Output($cdlDirectoryPath . "/" . $this->cdl . "-all.pdf", "F");
 		}
 
-		$this->prospettoPDF->Output($cdlDirectoryPath . "/" . $this->cdl . "-all.pdf", "F");
-
-		$this->saveList($cdlDirectoryPath);
+		if (!TEST_MODE || $matricola === "default") {
+			$this->saveList($cdlDirectoryPath);
+		}
 	}
 
 	private function clearDirectory(string $path): void {
@@ -75,11 +82,11 @@ class ProspettoCommissione extends ProspettoPDF{
 			$filePath = $path . '/' . $file;
 
 			if(is_dir($filePath)){
-				// Se è una directory, svuotarla ricorsivamente
+				// Se è una directory, la svuoto ricorsivamente
 				$this->clearDirectory($filePath);
 				rmdir($filePath);
 			} else {
-				// Se è un file, eliminarlo
+				// Se è un file, lo elimino
 				unlink($filePath);
 			}
 		}
@@ -89,18 +96,27 @@ class ProspettoCommissione extends ProspettoPDF{
 		$info = [];
 
 		for($i = 0; $i < count($this->anagraficheLaureandi); ++$i){
-			$info[] = [
-				"fileName" 	=> $this->titoliProspetti[$i],
-				"email" => $this->anagraficheLaureandi[$i]->email
-			];
+			// In TEST_MODE, aggiungi alla lista solo se la matricola è "default"
+			$matricola = $this->matricole[$i];
+			$shouldAdd = !defined("TEST_MODE") || !TEST_MODE || $matricola === "default";
+			
+			if($shouldAdd){
+				$info[] = [
+					"fileName" 	=> $this->titoliProspetti[$i],
+					"email" => $this->anagraficheLaureandi[$i]->email
+				];
+			}
 		}
 
-		$data = [
-			"totali" => count($this->anagraficheLaureandi),
-			"info" => $info
-		];
+		// Salva solo se ci sono entry da salvare
+		if(!empty($info)){
+			$data = [
+				"totali" => count($info),
+				"info" => $info
+			];
 
-		$jsonContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS);
-		file_put_contents($path . SEND_LOG_FILE_NAME, $jsonContent);
+			$jsonContent = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_LINE_TERMINATORS);
+			file_put_contents($path . SEND_LOG_FILE_NAME, $jsonContent);
+		}
 	}
 }

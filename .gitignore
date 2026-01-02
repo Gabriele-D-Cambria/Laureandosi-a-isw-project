@@ -3,3 +3,5 @@ docs/
 *.vpp~*
 *working*
 prospetti/*
+resources/test/*
+!resources/test/references

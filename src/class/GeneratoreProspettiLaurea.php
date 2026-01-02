@@ -54,11 +54,6 @@ class GeneratoreProspettiLaurea{
                 ++$index;
             }
 
-            if($index === $total){
-                unlink($logFilePath);
-                throw new Exception("Inviati tutti i prospetti per questo cdl.");
-            }
-
             $file =  $directoryPath . "/" . $associazioni[$index]['fileName'];
             $email = $associazioni[$index]['email'];
 
@@ -67,6 +62,13 @@ class GeneratoreProspettiLaurea{
             }
 
             unlink($file);
+
+            if($index === $total - 1){
+                unlink($logFilePath);
+                if (!TEST_MODE) {
+                    unlink($directoryPath . "/" . $cdl . "-all.pdf");
+                }
+            }
 
             return ["error" => false,
                     "message" => "Inviato prospetto n° ". ($index + 1) . " di " . $total,

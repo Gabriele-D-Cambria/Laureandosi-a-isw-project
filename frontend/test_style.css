@@ -1,0 +1,348 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    margin-bottom: 10px;
+    font-size: 2.5em;
+}
+
+.content {
+    padding: 30px;
+}
+
+.description {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+    color: #495057;
+}
+
+.description p {
+    margin-bottom: 10px;
+}
+
+.button-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.btn-test {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+.btn-test:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-test:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.loading-content {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.results-container {
+    display: none;
+    margin-top: 30px;
+}
+
+.results-container.active {
+    display: block;
+}
+
+.summary {
+    background: #e7f3ff;
+    border-left: 4px solid #0066cc;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.summary.error {
+    background: #ffe7e7;
+    border-left-color: #dc3545;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+th {
+    background: #667eea;
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.test-cell {
+    position: relative;
+    cursor: help;
+}
+
+.test-pass {
+    background: #28a745;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.test-fail {
+    background: #dc3545;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.test-na {
+    color: #6c757d;
+    font-style: italic;
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: #333;
+    color: white;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    font-size: 0.85em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.test-cell:hover .tooltip {
+    visibility: visible;
+}
+
+.pdf-status {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.pdf-icon {
+    font-size: 1.2em;
+}
+
+.pdf-icon.available {
+    color: #28a745;
+}
+
+.pdf-icon.missing {
+    color: #dc3545;
+}
+
+.btn-compare {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.2s;
+}
+
+.btn-compare:hover:not(:disabled) {
+    background: #138496;
+}
+
+.btn-compare:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+.email-test-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #fff3cd;
+    border-radius: 8px;
+    border: 2px solid #ffc107;
+}
+
+.email-test-section h3 {
+    margin-bottom: 15px;
+    color: #856404;
+}
+
+.email-input-group {
+    margin-bottom: 15px;
+}
+
+.email-input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #856404;
+}
+
+.email-input-group input {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px 15px;
+    border: 2px solid #ffc107;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+
+.email-input-group input:focus {
+    outline: none;
+    border-color: #e0a800;
+}
+
+.email-input-group input:invalid {
+    border-color: #dc3545;
+}
+
+.btn-email-test {
+    background: #ffc107;
+    color: #333;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1em;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.btn-email-test:hover:not(:disabled) {
+    background: #e0a800;
+}
+
+.btn-email-test:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.email-result {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 6px;
+    display: none;
+}
+
+.email-result.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    display: block;
+}
+
+.email-result.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    display: block;
+}

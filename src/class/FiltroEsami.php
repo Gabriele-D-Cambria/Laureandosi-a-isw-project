@@ -30,7 +30,7 @@ class FiltroEsami{
 		$this->filter = json_decode($jsonContent, true, 512, JSON_THROW_ON_ERROR);
 	}
 
-	public function getFilter(int $matricola, string $cdlShort): ?array{
+	public function getFilter(int|string $matricola, string $cdlShort): ?array{
 		$filter = $this->filter['global'];
 		
 		if($cdlShort === null || $this->filter[$cdlShort] === null)
@@ -44,7 +44,7 @@ class FiltroEsami{
 		$specificFilters = $this->filter['specific'];
 
 		foreach($specificFilters as $key => $value){
-			if($key === $matricola){
+			if($key == $matricola){
 					$filter['no-avg'] = array_merge($filter['no-avg'], $value['no-avg']);
 					$filter['no-cdl'] = array_merge($filter['no-cdl'], $value['no-cdl']);
 				break;

@@ -7,7 +7,7 @@ class ProspettoLaureando extends ProspettoPDF{
 	public AnagraficaLaureando $anagrafica;
 	public CarrieraLaureando $carriera;
 
-	public function __construct(int $matricola, string $cdl, string $dataLaurea) {
+	public function __construct(int|string $matricola, string $cdl, string $dataLaurea) {
 		parent::__construct();
 		$this->anagrafica = new AnagraficaLaureando($matricola);
 
@@ -37,6 +37,10 @@ class ProspettoLaureando extends ProspettoPDF{
 		$studentReport = $this->getStudentReport($this->carriera, $corso->totCFU, $corso->forceThesisValue, $corso->formulaLaurea);
 
 		$html = $header . $studentInfo . $studentCareer . $studentReport;
+
+		if(TEST_MODE){
+			$html .= $this->getSimulationBlock($this->infoCalcoloReportistica->getCorso($this->carriera->cdl), $this->carriera);
+		}
 
 		$this->prospettoPDF->WriteHTML($this->styleBlock  . $html);
 

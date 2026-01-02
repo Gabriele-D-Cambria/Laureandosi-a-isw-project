@@ -42,6 +42,21 @@ try {
 			$esito = GeneratoreProspettiLaurea::InviaProspettoLaureando($cdl);
 			sleep(13);
 			break;
+		case "runTests":
+			require_once __DIR__ . "/../test/UnitTest.php";
+			$esito = UnitTest::run();
+			break;
+		case "testEmail":
+			require_once __DIR__ . "/../test/UnitTest.php";
+			
+			// Valida email fornita dall'utente
+			$email = $_POST['email'] ?? '';
+			if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				send_error(400, ["error" => true, "message" => "Email non valida"]);
+			}
+			
+			$esito = UnitTest::testEmail($email);
+			break;
 		default:
 			send_error(400, ["error" => true, "message" => "Tipo di richiesta non valido"]);
 	}
