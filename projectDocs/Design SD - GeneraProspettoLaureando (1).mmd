@@ -1,0 +1,45 @@
+sequenceDiagram
+    participant script.js
+    participant requestHandler.php
+    participant GeneratoreProspettiLaurea
+    participant ProspettoCommissione
+    participant ProspettoLaureando
+    actor Utente
+
+    script.js->>requestHandler.php: POST request
+    
+    alt REQUEST_METHOD !== "POST"
+        requestHandler.php-->>script.js: 401 {error: true, message: "Not authorized"}
+        script.js->>script.js: updateStatus(message, "error")
+        script.js-->>Utente: Errore autorizzazione
+    else request-type vuoto
+        requestHandler.php->>requestHandler.php: empty($requestType)
+        requestHandler.php-->>script.js: 400 {error: true, message: "Tipo richiesta non definito"}
+        script.js-->>Utente: Errore validazione
+    else CDL vuoto/invalido
+        requestHandler.php->>GeneratoreProspettiLaurea: GeneraProspettoLaureando("", ...)
+        GeneratoreProspettiLaurea->>ProspettoCommissione: new ProspettoCommissione(...)
+        ProspettoCommissione->>ProspettoCommissione: Carica configurazione CDL
+        ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception("CDL non valido")
+        GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore: CDL non valido"}
+        requestHandler.php-->>script.js: JSON error
+        script.js-->>Utente: Errore CDL
+    else Data invalida
+        requestHandler.php->>GeneratoreProspettiLaurea: GeneraProspettoLaureando(cdl, "invalid-date", ...)
+        GeneratoreProspettiLaurea->>ProspettoCommissione: new ProspettoCommissione(...)
+        ProspettoCommissione->>ProspettoLaureando: new ProspettoLaureando(...)
+        ProspettoLaureando->>ProspettoLaureando: new DateTime("invalid-date")
+        ProspettoLaureando-->>ProspettoCommissione: Exception("Data non valida")
+        ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+        GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore: Data non valida"}
+        script.js-->>Utente: Errore data
+    else Matricole vuote
+        requestHandler.php->>GeneratoreProspettiLaurea: GeneraProspettoLaureando(cdl, dataLaurea, [])
+        Note over GeneratoreProspettiLaurea: Array vuoto = loop non eseguito
+        GeneratoreProspettiLaurea->>ProspettoCommissione: new ProspettoCommissione([], ...)
+        ProspettoCommissione->>ProspettoCommissione: mergeProspetti() - PDF vuoto
+        ProspettoCommissione->>ProspettoCommissione: saveList() - {totali: 0, info: []}
+        GeneratoreProspettiLaurea-->>script.js: {error: false, message: "Prospetti Creati"}
+        Note over script.js,Utente: Successo ma nessun PDF reale generato
+        script.js-->>Utente: Mostra successo (ingannevole)
+    end

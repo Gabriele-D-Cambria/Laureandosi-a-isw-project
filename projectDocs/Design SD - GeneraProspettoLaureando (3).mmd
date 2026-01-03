@@ -1,0 +1,46 @@
+sequenceDiagram
+    participant ProspettoCommissione
+    participant ProspettoLaureando
+    participant AnagraficaLaureando
+    participant CarrieraLaureando
+    participant FileSystem
+
+    Note over ProspettoCommissione: Inizio loop per ogni matricola
+    
+    loop Per ogni matricola nell'array
+        ProspettoCommissione->>ProspettoLaureando: new ProspettoLaureando(matricola, cdl, dataLaurea)
+        
+        rect rgb(230, 240, 255)
+            Note over ProspettoLaureando,AnagraficaLaureando: Step 1: Recupero Anagrafica
+            ProspettoLaureando->>AnagraficaLaureando: new AnagraficaLaureando(matricola)
+            AnagraficaLaureando->>AnagraficaLaureando: Chiamata API esse3
+            AnagraficaLaureando-->>ProspettoLaureando: {nome, cognome, email, dataNascita, ...}
+        end
+        
+        rect rgb(255, 240, 230)
+            Note over ProspettoLaureando,CarrieraLaureando: Step 2: Recupero Carriera<br/>Vedi diagrammi: 4-Carriera-Informatica o 5-Carriera-Generica
+            
+            alt CDL = "INF"
+                ProspettoLaureando->>CarrieraLaureando: new CarrieraLaureandoInformatica(...)
+                Note over CarrieraLaureando: Vedi diagramma: 4-Carriera-Informatica
+                CarrieraLaureando-->>ProspettoLaureando: {hasBonus, mediaInformatica, mediaPesata, ...}
+            else CDL generico
+                ProspettoLaureando->>CarrieraLaureando: new CarrieraLaureando(...)
+                Note over CarrieraLaureando: Vedi diagramma: 5-Carriera-Generica
+                CarrieraLaureando-->>ProspettoLaureando: {mediaPesata, esami, cfuTotali, ...}
+            end
+        end
+        
+        rect rgb(240, 255, 240)
+            Note over ProspettoLaureando,FileSystem: Step 3: Generazione PDF singolo
+            ProspettoLaureando->>ProspettoLaureando: generaHTML()
+            Note over ProspettoLaureando: Crea template HTML con:<br/>- Anagrafica<br/>- Lista esami<br/>- Medie<br/>- Bonus (se INF)
+            
+            ProspettoLaureando->>FileSystem: salvaProspetto(path)
+            FileSystem-->>ProspettoLaureando: PDF salvato (matricola-nome-cognome.pdf)
+        end
+        
+        ProspettoLaureando-->>ProspettoCommissione: Prospetto completato
+    end
+    
+    Note over ProspettoCommissione: Fine loop - Tutti i prospetti creati

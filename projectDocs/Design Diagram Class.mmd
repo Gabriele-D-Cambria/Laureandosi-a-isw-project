@@ -1,0 +1,310 @@
+classDiagram
+    direction TB
+    
+    %% ========================================
+    %% LAYER 1: FACADE
+    %% ========================================
+    
+    class GeneratoreProspettiLaurea {
+        Facade
+        +GeneraProspettoLaureando(cdl, dataLaurea, matricole)$ array
+        +AccediProspettoLaureando(cdl)$ array
+        +InviaProspettoLaureando(cdl)$ array
+    }
+    
+    %% ========================================
+    %% LAYER 2: GERARCHIA PDF
+    %% ========================================
+    
+    namespace PDFGeneration {
+        class ProspettoPDF {
+            abstract
+            #Mpdf prospettoPDF
+            #CalcoloReportistica infoCalcoloReportistica
+            #string styleBlock
+            #__construct()
+            -getStyleBlock() string
+            #getHeader(cdl, title) string
+            #getStudentInfo(carriera, anagrafica) string
+            #getStudentCareer(carriera) string
+            #getStudentReport(carriera, totalCFU, forceThesisValue, formulaLaurea) string
+            #getSimulationBlock(corso, carriera) string
+            #getListPage(corso, anagraficheLaureandi) string
+        }
+        
+        class ProspettoLaureando {
+            +AnagraficaLaureando anagrafica
+            +CarrieraLaureando carriera
+            +__construct(matricola, cdl, dataLaurea)
+            +salvaProspetto(path) string
+            +getTitoloProspetto() string
+        }
+        
+        class ProspettoCommissione {
+            -array anagraficheLaureandi
+            -array titoliProspetti
+            +array matricole
+            +string cdl
+            +string dataLaurea
+            +__construct(matricole, cdl, dataLaurea)
+            -clearDirectory(path) void
+            -saveList(path) void
+        }
+    }
+    
+    %% ========================================
+    %% LAYER 3: DOMINIO - STUDENTE
+    %% ========================================
+    
+    namespace StudenteDomain {
+        class AnagraficaLaureando {
+            +string nome
+            +string cognome
+            +string email
+            +__construct(matricola)
+        }
+        
+        class CarrieraLaureando {
+            +int|string matricola
+            +string cdl
+            +DateTime dataLaurea
+            +array esami
+            +int cfuTotali
+            +int cfuMedia
+            +float mediaPesata
+            +__construct(matricola, cdl, dataLaurea)
+        }
+        
+        class CarrieraLaureandoInformatica {
+            +bool hasBonus
+            +int annoImmatricolazione
+            +float mediaInformatica
+            +__construct(matricola, cdl, dataLaurea)
+            -checkBonus() void
+        }
+        
+        class Esame {
+            -int lode$
+            +string nome
+            +int voto
+            +int cfu
+            +bool faMedia
+            +__construct(esameJSON, faMedia)
+            +getLode()$ int
+        }
+        
+        class EsameInformatica {
+            +__construct(esameJSON, faMedia)
+        }
+    }
+    
+    %% ========================================
+    %% LAYER 4: CONFIGURAZIONI (SINGLETON)
+    %% ========================================
+    
+    namespace Configurations {
+        class CalcoloReportistica {
+            Singleton
+            -CalcoloReportistica instance$
+            -array config
+            -array corsi
+            -MailInfo genericMailInfo
+            -__construct()
+            +getInstance()$ CalcoloReportistica
+            -loadConfig() void
+            +getCorso(cdlShort) CorsoLaurea
+            +getAllCorsi() array
+            +getLode() int
+            +getDocTitle() string
+            +getInfoTitle() string
+            +getMailInfo(shortCdl) MailInfo
+        }
+        
+        class FiltroEsami {
+            Singleton
+            -FiltroEsami instance$
+            -array filter
+            -__construct()
+            +getIstance()$ FiltroEsami
+            -loadConfig() void
+            +getFilter(matricola, cdlShort) array
+        }
+        
+        class EsamiInformatica {
+            Singleton
+            -EsamiInformatica instance$
+            +array esami
+            -__construct()
+            +getIstance()$ EsamiInformatica
+            -loadConfig() void
+        }
+    }
+    
+    %% ========================================
+    %% LAYER 5: VALUE OBJECTS
+    %% ========================================
+    
+    namespace ValueObjects {
+        class CorsoLaurea {
+            +string cdl
+            +string cdlAlt
+            +string cdlShort
+            +string formulaLaurea
+            +int totCFU
+            +ParametroRange parT
+            +ParametroRange parC
+            +bool forceThesisValue
+            -string notaFinale
+            +__construct(...)
+            +getNotaFinale() string
+        }
+        
+        class ParametroRange {
+            +float min
+            +float max
+            +float step
+            +__construct(min, max, step)
+            +isActive() bool
+            +getValues() array
+        }
+        
+        class MailInfo {
+            +string host
+            +string fromMail
+            +string fromName
+            +string subject
+            +string body
+            +__construct(...)
+        }
+    }
+    
+    %% ========================================
+    %% LAYER 6: SERVIZI
+    %% ========================================
+    
+    namespace Services {
+        class MailSender {
+            -MailInfo mailInfo
+            +__construct(cdl)
+            +inviaMail(mailTo, attachmentFile) bool
+        }
+        
+        class GestioneCarrieraStudente {
+            Utility
+            +restituisciAnagraficaStudente(matricola)$ string
+            +restituisciCarrieraStudente(matricola)$ string
+        }
+    }
+    
+    %% ========================================
+    %% LAYER 7: TESTING
+    %% ========================================
+    
+    class UnitTest {
+        Utility
+        -float EPSILON$
+        +run()$ array
+        +testEmail(emailTo)$ array
+        +cleanOutputDirectory()$ void
+        -testMatricola(matricola, config, dataLaurea)$ array
+        -createCarriera(matricola, cdl, dataLaurea)$ CarrieraLaureando
+        -testFloatValue(actual, expected, label)$ array
+        -testIntValue(actual, expected, label)$ array
+        -testBoolValue(actual, expected, label)$ array
+    }
+    
+    %% ========================================
+    %% RELAZIONI DI EREDITARIETÀ
+    %% ========================================
+    
+    ProspettoPDF <|-- ProspettoLaureando : extends
+    ProspettoPDF <|-- ProspettoCommissione : extends
+    CarrieraLaureando <|-- CarrieraLaureandoInformatica : extends
+    Esame <|-- EsameInformatica : extends
+    
+    %% ========================================
+    %% RELAZIONI DI COMPOSIZIONE
+    %% ========================================
+    
+    ProspettoLaureando *-- "1" AnagraficaLaureando : contains
+    ProspettoLaureando *-- "1" CarrieraLaureando : contains
+    ProspettoCommissione *-- "0..*" AnagraficaLaureando : contains many
+    CarrieraLaureando *-- "0..*" Esame : contains many
+    CorsoLaurea *-- "2" ParametroRange : parT, parC
+    CalcoloReportistica *-- "1..*" CorsoLaurea : manages
+    CalcoloReportistica *-- "1" MailInfo : generic
+    
+    %% ========================================
+    %% RELAZIONI DI AGGREGAZIONE
+    %% ========================================
+    
+    ProspettoCommissione o-- "1..*" ProspettoLaureando : aggregates
+    
+    %% ========================================
+    %% RELAZIONI DI DIPENDENZA - LAYER PDF
+    %% ========================================
+    
+    GeneratoreProspettiLaurea ..> ProspettoCommissione : creates
+    ProspettoCommissione ..> ProspettoLaureando : creates
+    ProspettoPDF ..> CalcoloReportistica : uses
+    
+    %% ========================================
+    %% RELAZIONI DI DIPENDENZA - LAYER DOMAIN
+    %% ========================================
+    
+    ProspettoLaureando ..> GestioneCarrieraStudente : uses
+    AnagraficaLaureando ..> GestioneCarrieraStudente : uses
+    CarrieraLaureando ..> GestioneCarrieraStudente : uses
+    CarrieraLaureando ..> FiltroEsami : uses
+    CarrieraLaureandoInformatica ..> EsamiInformatica : uses
+    Esame ..> CalcoloReportistica : uses
+    
+    %% ========================================
+    %% RELAZIONI DI DIPENDENZA - LAYER SERVICES
+    %% ========================================
+    
+    GeneratoreProspettiLaurea ..> MailSender : uses
+    MailSender ..> CalcoloReportistica : uses
+    
+    %% ========================================
+    %% RELAZIONI DI DIPENDENZA - TESTING
+    %% ========================================
+    
+    UnitTest ..> GeneratoreProspettiLaurea : tests
+    UnitTest ..> CarrieraLaureando : tests
+    
+    %% ========================================
+    %% STILI - COLORI AZZURRI
+    %% ========================================
+    
+    %% Facade
+    style GeneratoreProspettiLaurea fill:#BBDEFB,stroke:#1976D2,stroke-width:2px
+    
+    %% PDF Generation
+    style ProspettoPDF fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style ProspettoLaureando fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style ProspettoCommissione fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    
+    %% Dominio Studente
+    style AnagraficaLaureando fill:#BBDEFB,stroke:#1976D2,stroke-width:2px
+    style CarrieraLaureando fill:#BBDEFB,stroke:#1976D2,stroke-width:2px
+    style CarrieraLaureandoInformatica fill:#90CAF9,stroke:#1565C0,stroke-width:2px
+    style Esame fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    style EsameInformatica fill:#E3F2FD,stroke:#2196F3,stroke-width:2px
+    
+    %% Configurazioni
+    style CalcoloReportistica fill:#B3E5FC,stroke:#0277BD,stroke-width:2px
+    style FiltroEsami fill:#B3E5FC,stroke:#0277BD,stroke-width:2px
+    style EsamiInformatica fill:#B3E5FC,stroke:#0277BD,stroke-width:2px
+    
+    %% Value Objects
+    style CorsoLaurea fill:#E1F5FE,stroke:#03A9F4,stroke-width:2px
+    style ParametroRange fill:#E1F5FE,stroke:#03A9F4,stroke-width:2px
+    style MailInfo fill:#E1F5FE,stroke:#03A9F4,stroke-width:2px
+    
+    %% Servizi
+    style MailSender fill:#B2EBF2,stroke:#00838F,stroke-width:2px
+    style GestioneCarrieraStudente fill:#B2EBF2,stroke:#00838F,stroke-width:2px
+    
+    %% Testing
+    style UnitTest fill:#80DEEA,stroke:#006064,stroke-width:2px

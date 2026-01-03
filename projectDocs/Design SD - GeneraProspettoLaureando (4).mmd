@@ -1,0 +1,94 @@
+sequenceDiagram
+    participant ProspettoLaureando
+    participant CarrieraLaureando as CarrieraLaureandoInformatica
+    participant GestioneCarrieraStudente
+    participant FiltroEsami
+    participant EsamiInformatica
+    participant Esame
+
+    ProspettoLaureando->>CarrieraLaureando: new CarrieraLaureandoInformatica(matricola, cdl, dataLaurea)
+    
+    rect rgb(255, 250, 245)
+        Note over CarrieraLaureando,GestioneCarrieraStudente: Recupero esami da API
+        CarrieraLaureando->>GestioneCarrieraStudente: restituisciCarrieraStudente(matricola)
+        GestioneCarrieraStudente-->>CarrieraLaureando: JSON {Esami: {Esame: [...]}}
+    end
+    
+    rect rgb(245, 255, 245)
+        Note over CarrieraLaureando,EsamiInformatica: Caricamento configurazioni
+        CarrieraLaureando->>FiltroEsami: getFilter(matricola, cdl)
+        FiltroEsami-->>CarrieraLaureando: {no-cdl: [...], no-avg: [...]}
+        
+        CarrieraLaureando->>EsamiInformatica: getIstance()
+        EsamiInformatica-->>CarrieraLaureando: Lista esami informatica
+    end
+    
+    rect rgb(255, 245, 255)
+        Note over CarrieraLaureando,Esame: Processamento esami
+        
+        loop Per ogni esame in carriera JSON
+            alt DES invalido (array/null/vuoto)
+                CarrieraLaureando->>CarrieraLaureando: Skip esame
+            else SOVRAN_FLG = 1
+                CarrieraLaureando->>CarrieraLaureando: Skip (sovranumerario)
+            else DES in lista no-cdl
+                CarrieraLaureando->>CarrieraLaureando: Skip (escluso per CDL)
+            else Esame valido
+                alt Esame in lista EsamiInformatica
+                    CarrieraLaureando->>Esame: new EsameInformatica(esameJSON, faMedia)
+                    Note over Esame: faMedia = !in_array(DES, no-avg)
+                    Esame-->>CarrieraLaureando: EsameInformatica instance
+                else Esame non in lista INF
+                    CarrieraLaureando->>Esame: new Esame(esameJSON, faMedia)
+                    Esame-->>CarrieraLaureando: Esame generico
+                end
+                CarrieraLaureando->>CarrieraLaureando: Aggiungi a $this->esami[]
+            end
+        end
+    end
+    
+    rect rgb(240, 255, 255)
+        Note over CarrieraLaureando: Applicazione Bonus (solo Informatica)
+        CarrieraLaureando->>CarrieraLaureando: checkBonus()
+        CarrieraLaureando->>CarrieraLaureando: annoImm = primo esame->ANNO_IMM
+        CarrieraLaureando->>CarrieraLaureando: dataLimite = (annoImm + 4) + "-03-01"
+        
+        alt dataLaurea < dataLimite
+            CarrieraLaureando->>CarrieraLaureando: hasBonus = true
+            Note over CarrieraLaureando: Studente si laurea in tempo
+            
+            loop Trova esame con voto più basso
+                CarrieraLaureando->>CarrieraLaureando: Confronta voti (se uguali, preferisce più CFU)
+            end
+            
+            CarrieraLaureando->>CarrieraLaureando: lowerExam->faMedia = false
+            Note over CarrieraLaureando: Esclude esame peggiore dalla media
+        else dataLaurea >= dataLimite
+            CarrieraLaureando->>CarrieraLaureando: hasBonus = false
+        end
+    end
+    
+    rect rgb(255, 255, 240)
+        Note over CarrieraLaureando: Calcoli finali (doppia media)
+        
+        loop Per ogni esame
+            CarrieraLaureando->>CarrieraLaureando: cfuTotali += esame->cfu
+            
+            alt esame->faMedia = true
+                CarrieraLaureando->>CarrieraLaureando: cfuMedia += esame->cfu
+                CarrieraLaureando->>CarrieraLaureando: mediaPesata += voto * cfu
+                
+                alt esame instanceof EsameInformatica
+                    CarrieraLaureando->>CarrieraLaureando: cfuInf += esame->cfu
+                    CarrieraLaureando->>CarrieraLaureando: mediaInformatica += voto * cfu
+                end
+            end
+        end
+        
+        CarrieraLaureando->>CarrieraLaureando: mediaPesata = mediaPesata / cfuMedia
+        CarrieraLaureando->>CarrieraLaureando: mediaInformatica = mediaInformatica / cfuInf
+        CarrieraLaureando->>CarrieraLaureando: round(mediaPesata, 3)
+        CarrieraLaureando->>CarrieraLaureando: round(mediaInformatica, 3)
+    end
+    
+    CarrieraLaureando-->>ProspettoLaureando: {hasBonus, mediaInformatica, mediaPesata, esami, cfuTotali, cfuMedia}

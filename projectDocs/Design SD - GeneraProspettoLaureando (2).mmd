@@ -1,0 +1,70 @@
+---
+query: Puoi separare questo diagramma in più diagrammi, inserendo i rapporti di link,
+  così da renderlo più leggibile?
+generationTime: 2026-01-03T19:05:11.754Z
+---
+sequenceDiagram
+    participant ProspettoCommissione
+    participant ProspettoLaureando
+    participant AnagraficaLaureando
+    participant GestioneCarrieraStudente
+    participant FileSystem
+    participant GeneratoreProspettiLaurea
+    actor Utente
+
+    ProspettoCommissione->>ProspettoLaureando: new ProspettoLaureando(matricola, cdl, dataLaurea)
+    
+    rect rgb(255, 245, 245)
+        Note over ProspettoLaureando,AnagraficaLaureando: Errori Anagrafica
+        ProspettoLaureando->>AnagraficaLaureando: new AnagraficaLaureando(matricola)
+        
+        alt Matricola non esistente
+            AnagraficaLaureando->>AnagraficaLaureando: API esse3 - 404 Not Found
+            AnagraficaLaureando-->>ProspettoLaureando: Exception("Matricola non trovata")
+            ProspettoLaureando-->>ProspettoCommissione: Exception
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception("Errore matricola X")
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "Matricola non trovata"}
+        else API esse3 timeout
+            AnagraficaLaureando->>AnagraficaLaureando: Timeout connessione
+            AnagraficaLaureando-->>ProspettoLaureando: Exception("API timeout")
+            ProspettoLaureando-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "API esse3 timeout"}
+        end
+    end
+    
+    rect rgb(255, 250, 245)
+        Note over ProspettoLaureando,GestioneCarrieraStudente: Errori Carriera
+        ProspettoLaureando->>GestioneCarrieraStudente: restituisciCarrieraStudente(matricola)
+        
+        alt API non disponibile
+            GestioneCarrieraStudente->>GestioneCarrieraStudente: Errore connessione
+            GestioneCarrieraStudente-->>ProspettoLaureando: Exception("API non disponibile")
+            ProspettoLaureando-->>ProspettoCommissione: Exception
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "API esse3 non disponibile"}
+        else JSON malformato
+            GestioneCarrieraStudente-->>ProspettoLaureando: JSON invalido
+            ProspettoLaureando->>ProspettoLaureando: json_decode() error
+            ProspettoLaureando-->>ProspettoCommissione: Exception("JSON malformato")
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "Errore parsing dati"}
+        end
+    end
+    
+    rect rgb(255, 240, 240)
+        Note over ProspettoLaureando,FileSystem: Errori Filesystem
+        ProspettoLaureando->>ProspettoLaureando: salvaProspetto(path)
+        ProspettoLaureando->>FileSystem: Scrivi PDF
+        
+        alt Permessi insufficienti
+            FileSystem-->>ProspettoLaureando: Exception("Permission denied")
+            ProspettoLaureando-->>ProspettoCommissione: Exception
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception("Errore scrittura PDF")
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "Errore permessi file"}
+        else Spazio disco esaurito
+            FileSystem-->>ProspettoLaureando: Exception("No space left")
+            ProspettoLaureando-->>ProspettoCommissione: Exception
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>Utente: {error: true, message: "Spazio disco insufficiente"}
+        end
+    end

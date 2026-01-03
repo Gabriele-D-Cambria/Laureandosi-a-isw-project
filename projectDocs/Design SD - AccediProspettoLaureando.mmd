@@ -1,0 +1,79 @@
+sequenceDiagram
+    actor Utente
+    participant index.php
+    participant script.js
+    participant requestHandler.php
+    participant GeneratoreProspettiLaurea
+    participant FileSystem
+    participant Browser
+
+    Utente->>index.php: Inserisce cdl
+    Utente->>index.php: Click su "Apri Prospetti"
+    index.php->>script.js: Event btn-open
+    script.js->>script.js: getFormData()
+    Note over script.js: Estrae solo il cdl dal form<br/>(dataLaurea e matricole non richiesti)
+    
+    script.js->>requestHandler.php: POST (request-type: "open", cdl)
+    
+    alt Validazione fallita
+        requestHandler.php->>requestHandler.php: Verifica REQUEST_METHOD !== "POST"
+        requestHandler.php-->>script.js: 401 {error: true, message: "Not authorized"}
+        script.js->>script.js: updateStatus(message, "error")
+        script.js-->>Utente: Mostra errore autorizzazione
+    else Validazione request-type mancante
+        requestHandler.php->>requestHandler.php: empty(requestType)
+        requestHandler.php-->>script.js: 400 {error: true, message: "Tipo richiesta non definito"}
+        script.js->>script.js: updateStatus(message, "error")
+        script.js-->>Utente: Mostra errore validazione
+    else Validazione OK
+        requestHandler.php->>requestHandler.php: Switch case "open"
+        requestHandler.php->>GeneratoreProspettiLaurea: AccediProspettoLaureando(cdl)
+        
+        rect rgb(240, 248, 255)
+            Note over GeneratoreProspettiLaurea,FileSystem: Costruzione percorsi file
+            GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: path = BASE_PROSPETTI_PATH/cdl/cdl-all.pdf
+            GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: url = BASE_PROSPETTI_URL/cdl/cdl-all.pdf
+            Note over GeneratoreProspettiLaurea: path: percorso filesystem locale<br/>url: percorso web accessibile
+        end
+        
+        rect rgb(255, 245, 245)
+            Note over GeneratoreProspettiLaurea,FileSystem: Verifica esistenza file PDF
+            GeneratoreProspettiLaurea->>FileSystem: file_exists(path)
+            
+            alt File PDF non esiste
+                FileSystem-->>GeneratoreProspettiLaurea: false
+                Note over GeneratoreProspettiLaurea: Possibili cause:<br/>- Prospetti non ancora generati<br/>- CDL errato<br/>- File già eliminato dopo invio
+                GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Impossibile trovare il file"}
+                requestHandler.php-->>script.js: JSON response
+                script.js->>script.js: updateStatus("Impossibile trovare il file", "error")
+                script.js-->>Utente: Mostra errore - file mancante
+            else File PDF esiste
+                FileSystem-->>GeneratoreProspettiLaurea: true
+                GeneratoreProspettiLaurea-->>requestHandler.php: {error: false, message: "Prospetti Aperti in un'altra pagina", pdf_url: url}
+                requestHandler.php-->>script.js: JSON response
+                script.js->>script.js: updateStatus("Prospetti Aperti in un'altra pagina", "success")
+                
+                rect rgb(240, 255, 240)
+                    Note over script.js,Browser: Apertura PDF in nuova scheda
+                    script.js->>Browser: window.open(pdf_url, '_blank')
+                    
+                    alt Browser blocca popup
+                        Browser-->>script.js: Popup bloccato (return null/undefined)
+                        script.js->>Utente: confirm("Il browser ha bloccato l'apertura automatica...")
+                        
+                        alt Utente conferma
+                            Utente-->>script.js: OK
+                            script.js->>Browser: window.location.href = pdf_url
+                            Browser-->>Utente: Apre PDF nella stessa scheda
+                        else Utente annulla
+                            Utente-->>script.js: Annulla
+                            Note over Utente: PDF non aperto, ma URL disponibile
+                        end
+                    else Popup consentito
+                        Browser-->>Utente: Apre PDF in nuova scheda
+                        Note over Browser: Visualizza cdl-all.pdf<br/>con tutti i prospetti combinati
+                    end
+                end
+            end
+        end
+    end

@@ -1,0 +1,36 @@
+sequenceDiagram
+    actor Utente
+    participant index.php
+    participant script.js
+    participant requestHandler.php
+    participant GeneratoreProspettiLaurea
+    participant ProspettoCommissione
+
+    Utente->>index.php: Inserisce cdl, dataLaurea, matricole
+    Utente->>index.php: Click su "Crea Prospetti"
+    index.php->>script.js: Event btn-create
+    script.js->>script.js: getFormData() - Valida e formatta
+    
+    script.js->>requestHandler.php: POST (request-type: "create", cdl, dataLaurea, matricole)
+    
+    alt Validazione fallita
+        requestHandler.php-->>script.js: 400/401 error
+        script.js-->>Utente: Mostra errore
+        Note over Utente,script.js: Vedi diagramma: 1-Validazione-Errori
+    else Validazione OK
+        requestHandler.php->>GeneratoreProspettiLaurea: GeneraProspettoLaureando(cdl, dataLaurea, matricole)
+        
+        alt Errore creazione
+            GeneratoreProspettiLaurea-->>script.js: {error: true}
+            script.js-->>Utente: Mostra errore
+            Note over GeneratoreProspettiLaurea,script.js: Vedi diagramma: 2-Errori-Creazione
+        else Successo
+            GeneratoreProspettiLaurea->>ProspettoCommissione: new ProspettoCommissione(...)
+            Note over ProspettoCommissione: Vedi diagramma: 3-Loop-Matricole
+            ProspettoCommissione->>ProspettoCommissione: mergeProspetti() + saveList()
+            Note over ProspettoCommissione: Vedi diagramma: 6-File-Finali
+            GeneratoreProspettiLaurea-->>script.js: {error: false, message: "Prospetti Creati"}
+            script.js->>script.js: updateStatus("success")
+            script.js-->>Utente: Successo
+        end
+    end

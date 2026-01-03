@@ -1,0 +1,145 @@
+sequenceDiagram
+    actor Utente
+    participant index.php
+    participant script.js
+    participant requestHandler.php
+    participant GeneratoreProspettiLaurea
+    participant FileSystem
+    participant MailSender
+    participant PHPMailer
+    participant SMTPServer
+
+    Utente->>index.php: Inserisce cdl
+    Utente->>index.php: Click su "Invia Prospetti"
+    index.php->>script.js: Event btn-send
+    script.js->>script.js: getFormData()
+    script.js->>script.js: updateStatus("Invio mail in corso...", "loading")
+    script.js->>script.js: processBatchMail(formData)
+    
+    rect rgb(240, 248, 255)
+        Note over script.js,SMTPServer: Loop ricorsivo per invio sequenziale
+        
+        loop Fino a invio completato (finished = true)
+            script.js->>requestHandler.php: POST (request-type: "send", cdl)
+            
+            alt Validazione fallita
+                requestHandler.php-->>script.js: 400 {error: true, message: "Tipo richiesta non definito"}
+                script.js->>script.js: updateStatus(message, "error")
+                script.js-->>Utente: Mostra errore validazione
+            else Validazione OK
+                requestHandler.php->>GeneratoreProspettiLaurea: InviaProspettoLaureando(cdl)
+                
+                rect rgb(255, 245, 245)
+                    Note over GeneratoreProspettiLaurea,FileSystem: Verifica esistenza prospetti
+                    GeneratoreProspettiLaurea->>FileSystem: is_dir(BASE_PROSPETTI_PATH/cdl)
+                    GeneratoreProspettiLaurea->>FileSystem: file_exists(lista_prospetti_da_inviare.json)
+                    
+                    alt Directory o file JSON non esistono
+                        FileSystem-->>GeneratoreProspettiLaurea: false
+                        GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: throw Exception("Prospetti non generati per questo cdl.")
+                        GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Prospetti non generati..."}
+                        requestHandler.php-->>script.js: JSON error response
+                        script.js->>script.js: updateStatus(message, "error")
+                        script.js-->>Utente: Mostra errore - prospetti mancanti
+                    else File esistono
+                        FileSystem-->>GeneratoreProspettiLaurea: true
+                        
+                        rect rgb(240, 255, 240)
+                            Note over GeneratoreProspettiLaurea,FileSystem: Lettura e parsing JSON
+                            GeneratoreProspettiLaurea->>FileSystem: file_get_contents(lista_prospetti_da_inviare.json)
+                            FileSystem-->>GeneratoreProspettiLaurea: JSON content
+                            
+                            alt JSON malformato
+                                GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: json_decode() con JSON_THROW_ON_ERROR
+                                GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: throw JsonException
+                                GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore parsing JSON"}
+                                requestHandler.php-->>script.js: JSON error response
+                                script.js->>script.js: updateStatus(message, "error")
+                                script.js-->>Utente: Mostra errore JSON
+                            else JSON valido
+                                GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: Estrae {totali, info[]}
+                                Note over GeneratoreProspettiLaurea: info = [{fileName, email}, ...]
+                            end
+                        end
+                        
+                        rect rgb(255, 250, 240)
+                            Note over GeneratoreProspettiLaurea,FileSystem: Ricerca prossimo file da inviare
+                            GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: index = 0
+                            
+                            loop while index < total && !file_exists(fileName)
+                                GeneratoreProspettiLaurea->>FileSystem: file_exists(associazioni[index]['fileName'])
+                                FileSystem-->>GeneratoreProspettiLaurea: false (già inviato)
+                                GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: ++index
+                            end
+                            
+                            GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: file = associazioni[index]['fileName']
+                            GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: email = associazioni[index]['email']
+                        end
+                        
+                        rect rgb(255, 240, 255)
+                            Note over GeneratoreProspettiLaurea,SMTPServer: Invio email tramite MailSender
+                            GeneratoreProspettiLaurea->>MailSender: new MailSender(cdl)
+                            MailSender->>MailSender: Carica configurazione SMTP per CDL
+                            
+                            GeneratoreProspettiLaurea->>MailSender: inviaMail(email, file)
+                            
+                            MailSender->>PHPMailer: new PHPMailer(true)
+                            MailSender->>PHPMailer: Configura SMTP (host, port, auth)
+                            MailSender->>PHPMailer: setFrom(mittente_cdl)
+                            MailSender->>PHPMailer: addAddress(email)
+                            MailSender->>PHPMailer: addAttachment(file) - Allega PDF
+                            MailSender->>PHPMailer: Imposta Subject e Body
+                            
+                            alt Errore invio email
+                                PHPMailer->>SMTPServer: send()
+                                SMTPServer-->>PHPMailer: SMTP Error (timeout, auth failed, etc.)
+                                PHPMailer-->>MailSender: Exception
+                                MailSender-->>GeneratoreProspettiLaurea: return false
+                                GeneratoreProspettiLaurea->>GeneratoreProspettiLaurea: throw Exception("Errore invio prospetto n° X di Y")
+                                GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore invio..."}
+                                requestHandler.php-->>script.js: JSON error response
+                                script.js->>script.js: updateStatus(message, "error")
+                                script.js-->>Utente: Mostra errore invio email
+                            else Invio riuscito
+                                PHPMailer->>SMTPServer: send()
+                                SMTPServer-->>PHPMailer: 250 OK
+                                PHPMailer-->>MailSender: true
+                                MailSender-->>GeneratoreProspettiLaurea: return true
+                                
+                                rect rgb(255, 228, 225)
+                                    Note over GeneratoreProspettiLaurea,FileSystem: Pulizia file dopo invio
+                                    GeneratoreProspettiLaurea->>FileSystem: unlink(file) - Elimina PDF inviato
+                                    FileSystem-->>GeneratoreProspettiLaurea: File eliminato
+                                    
+                                    alt Ultimo prospetto inviato (index === total - 1)
+                                        Note over GeneratoreProspettiLaurea: Pulizia finale
+                                        GeneratoreProspettiLaurea->>FileSystem: unlink(lista_prospetti_da_inviare.json)
+                                        
+                                        alt TEST_MODE = false
+                                            GeneratoreProspettiLaurea->>FileSystem: unlink(cdl-all.pdf)
+                                            Note over GeneratoreProspettiLaurea: In produzione elimina anche PDF combinato
+                                        else TEST_MODE = true
+                                            Note over GeneratoreProspettiLaurea: In test mantiene cdl-all.pdf
+                                        end
+                                        
+                                        GeneratoreProspettiLaurea-->>requestHandler.php: {error: false, message: "Inviato n° X di Y", finished: true}
+                                        requestHandler.php->>requestHandler.php: sleep(13) - Rate limiting
+                                        requestHandler.php-->>script.js: JSON response
+                                        script.js->>script.js: updateStatus(message, "success")
+                                        script.js->>script.js: form.reset()
+                                        script.js-->>Utente: Mostra completamento totale
+                                    else Altri prospetti da inviare
+                                        GeneratoreProspettiLaurea-->>requestHandler.php: {error: false, message: "Inviato n° X di Y", finished: false}
+                                        requestHandler.php->>requestHandler.php: sleep(13) - Rate limiting
+                                        requestHandler.php-->>script.js: JSON response
+                                        script.js->>script.js: updateStatus(message, "loading")
+                                        Note over script.js: Chiamata ricorsiva processBatchMail()
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end

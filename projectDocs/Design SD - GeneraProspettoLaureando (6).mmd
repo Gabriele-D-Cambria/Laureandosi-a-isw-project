@@ -1,0 +1,57 @@
+---
+query: Puoi separare questo diagramma in più diagrammi, inserendo i rapporti di link,
+  così da renderlo più leggibile?
+generationTime: 2026-01-03T19:05:11.873Z
+---
+sequenceDiagram
+    participant ProspettoCommissione
+    participant FileSystem
+    participant GeneratoreProspettiLaurea
+    participant requestHandler.php
+    participant script.js
+    actor Utente
+
+    Note over ProspettoCommissione: Tutti i prospetti individuali creati
+    
+    rect rgb(255, 240, 240)
+        Note over ProspettoCommissione,FileSystem: Merge PDF combinato
+        ProspettoCommissione->>ProspettoCommissione: mergeProspetti()
+        ProspettoCommissione->>FileSystem: Combina tutti i PDF individuali
+        
+        alt Errore merge PDF
+            FileSystem-->>ProspettoCommissione: Exception("Errore libreria PDF")
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore merge PDF"}
+            requestHandler.php-->>script.js: JSON error
+            script.js-->>Utente: Mostra errore merge
+        else Merge OK
+            FileSystem-->>ProspettoCommissione: cdl-all.pdf creato
+            Note over FileSystem: Es: BASE_PROSPETTI_PATH/INF/INF-all.pdf
+        end
+    end
+    
+    rect rgb(240, 255, 240)
+        Note over ProspettoCommissione,FileSystem: Creazione file JSON per invio
+        ProspettoCommissione->>ProspettoCommissione: saveList()
+        Note over ProspettoCommissione: Genera struttura:<br/>{<br/>  totali: N,<br/>  info: [<br/>    {fileName: "...", email: "..."},<br/>    ...<br/>  ]<br/>}
+        
+        ProspettoCommissione->>FileSystem: Scrivi lista_prospetti_da_inviare.json
+        
+        alt Errore scrittura JSON
+            FileSystem-->>ProspettoCommissione: Exception("Permessi/spazio disco")
+            ProspettoCommissione-->>GeneratoreProspettiLaurea: Exception
+            GeneratoreProspettiLaurea-->>requestHandler.php: {error: true, message: "Errore salvataggio lista"}
+            requestHandler.php-->>script.js: JSON error
+            script.js-->>Utente: Errore file JSON
+        else JSON creato
+            FileSystem-->>ProspettoCommissione: lista_prospetti_da_inviare.json salvato
+            Note over FileSystem: Sarà usato da InviaProspettoLaureando()
+        end
+    end
+    
+    ProspettoCommissione-->>GeneratoreProspettiLaurea: Successo completo
+    GeneratoreProspettiLaurea-->>requestHandler.php: {error: false, message: "Prospetti Creati"}
+    requestHandler.php-->>script.js: JSON response
+    script.js->>script.js: updateStatus("Prospetti Creati", "success")
+    script.js->>script.js: form.reset()
+    script.js-->>Utente: Mostra successo
