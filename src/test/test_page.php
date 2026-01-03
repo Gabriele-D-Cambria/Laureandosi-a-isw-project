@@ -18,8 +18,11 @@ UnitTest::cleanOutputDirectory();
 <body>
     <div class="container">
         <div class="header">
-            <h1>Unit Test - Gestione Prospetti di Laurea</h1>
-            <p>Verifica automatica della correttezza dei calcoli e della generazione dei prospetti</p>
+            <div class="header-content">
+                <h1>Unit Test - Gestione Prospetti di Laurea</h1>
+                <p>Verifica automatica della correttezza dei calcoli e della generazione dei prospetti</p>
+            </div>
+            <a href="index.php" class="btn-back">Torna alla Home</a>
         </div>
 
         <div class="content">
@@ -35,7 +38,7 @@ UnitTest::cleanOutputDirectory();
             </div>
 
             <div class="button-container">
-                <button id="btnStartTest" class="btn-test">▶️ Inizia Test</button>
+                <button id="btnStartTest" class="btn-test">Inizia Test</button>
             </div>
 
             <div id="resultsContainer" class="results-container">

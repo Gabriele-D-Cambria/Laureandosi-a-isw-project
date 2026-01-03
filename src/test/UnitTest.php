@@ -77,11 +77,12 @@ class UnitTest {
             "cognome" => $config['cognome'],
             "cdl" => $config['cdl'],
             "overallPass" => true,
-            "tests" => []
+            "tests" => [],
+            "shouldFail" => isset($config['shouldFail']) && $config['shouldFail']
         ];
 
         // Caso speciale: matricola che dovrebbe fallire
-        if (isset($config['shouldFail']) && $config['shouldFail']) {
+        if ($result['shouldFail']) {
 			$esito = GeneratoreProspettiLaurea::GeneraProspettoLaureando(
 				$config['cdl'],
 				$dataLaurea,

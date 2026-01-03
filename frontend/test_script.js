@@ -71,7 +71,12 @@ function displayResults(data) {
 
 function createResultRow(result) {
     const row = document.createElement('tr');
-    row.style.backgroundColor = (result.overallPass) ? '#d4edda' : '#f8d7da';
+    
+    if (result.shouldFail) {
+        row.className = 'test-row-should-fail';
+    } else {
+        row.className = (result.overallPass) ? 'test-row-pass' : 'test-row-fail';
+    }
 
     
     const cellMatricola = document.createElement('td');
@@ -80,7 +85,11 @@ function createResultRow(result) {
 
     
     const cellNome = document.createElement('td');
-    cellNome.textContent = `${result.nome} ${result.cognome}`;
+    if (result.shouldFail) {
+        cellNome.innerHTML = `${result.nome} ${result.cognome} <br><span class="badge-should-fail">(fallimento atteso)</span>`;
+    } else {
+        cellNome.innerHTML = `${result.nome} ${result.cognome}`;
+    }
     row.appendChild(cellNome);
 
     
@@ -121,7 +130,31 @@ function createResultRow(result) {
 
     
     const cellActions = document.createElement('td');
-    if (!result.shouldFail && result.pdfGenerated) {
+    
+    if (result.shouldFail) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-comparison';
+        
+        const statusSpan = document.createElement('span');
+        statusSpan.className = result.overallPass ? 'test-pass-expected-fail' : 'test-fail-expected-fail';
+        statusSpan.textContent = result.overallPass ? 'Fallito correttamente' : 'Comportamento inatteso';
+        errorDiv.appendChild(statusSpan);
+        
+        if (result.expectedError || result.actualError) {
+            const comparison = document.createElement('div');
+            comparison.style.marginTop = '8px';
+            comparison.innerHTML = `
+                <strong>Errore Atteso:</strong>
+                <span class="error-expected">${result.expectedError || 'N/A'}</span>
+                <strong>Errore Ricevuto:</strong>
+                <span class="error-actual">${result.actualError || 'N/A'}</span>
+            `;
+            errorDiv.appendChild(comparison);
+        }
+        
+        cellActions.appendChild(errorDiv);
+    }
+    else if (!result.shouldFail && result.pdfGenerated) {
         const btnCompare = document.createElement('button');
         btnCompare.className = 'btn-compare';
         btnCompare.textContent = 'Confronta PDF';
@@ -130,7 +163,7 @@ function createResultRow(result) {
         cellActions.appendChild(btnCompare);
     } 
 	else if (result.error) {
-        cellActions.innerHTML = `<span style="color: #dc3545;">ERRORE: ${result.error}</span>`;
+        cellActions.innerHTML = `<span style="color: #dc3545;">Errore: ${result.error}</span>`;
     }
     row.appendChild(cellActions);
 
@@ -148,7 +181,7 @@ function createTestCell(test) {
 
     const statusSpan = document.createElement('span');
     statusSpan.className = test.pass ? 'test-pass' : 'test-fail';
-    statusSpan.textContent = test.pass ? 'PASS' : 'FAIL';
+    statusSpan.textContent = test.pass ? 'PASSATO' : 'FALLITO';
 
     const tooltip = document.createElement('div');
     tooltip.className = 'tooltip';
@@ -206,18 +239,18 @@ async function testEmail() {
 
         if (data.error) {
             resultDiv.className = 'email-result error';
-            resultDiv.innerHTML = `<strong>Errore:</strong> ${data.message}`;
+            resultDiv.innerHTML = `Errore: ${data.message}`;
         } else {
             resultDiv.className = 'email-result success';
             resultDiv.innerHTML = `
-                <strong>OK: ${data.message}</strong><br>
+                Email inviata con successo<br>
                 <small>Destinatario: ${data.recipient || 'N/A'}</small><br>
                 <small>Allegato: ${data.attachment || 'N/A'}</small>
             `;
         }
     } catch (error) {
         resultDiv.className = 'email-result error';
-        resultDiv.innerHTML = `<strong>Errore:</strong> ${error.message}`;
+        resultDiv.innerHTML = `Errore: ${error.message}`;
     } finally {
         btn.disabled = false;
     }
@@ -226,5 +259,5 @@ async function testEmail() {
 function showSummary(message, isError) {
     const summary = document.getElementById('summary');
     summary.className = isError ? 'summary error' : 'summary';
-    summary.innerHTML = `<h3>${isError ? 'ERRORE' : 'OK'} ${message}</h3>`;
+    summary.innerHTML = `<h3>${isError ? 'Errore' : 'Completato'}: ${message}</h3>`;
 }
