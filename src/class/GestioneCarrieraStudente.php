@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
 
 class GestioneCarrieraStudente{
 
 	public static function restituisciAnagraficaStudente(int|string $matricola): ?string{
-		$anagraficaJsonPath = BASE_RESOURCE_PATH . "/anagrafica_studenti.json";
+		$anagraficaJsonPath = joinPath(BASE_RESOURCE_PATH, "anagrafica_studenti.json");
 
 		if(!file_exists($anagraficaJsonPath)){
 			throw new ErrorException("File delle anagrafiche non trovato!");
@@ -28,7 +28,7 @@ class GestioneCarrieraStudente{
 	}
 	
 	public static function restituisciCarrieraStudente(int|string $matricola): ?string{
-		$carrieraJsonPath = BASE_RESOURCE_PATH . "/carriera_studenti.json";
+		$carrieraJsonPath = joinPath(BASE_RESOURCE_PATH, "carriera_studenti.json");
 
 		if(!file_exists($carrieraJsonPath)){
 			throw new ErrorException("File delle carriere non trovato!");

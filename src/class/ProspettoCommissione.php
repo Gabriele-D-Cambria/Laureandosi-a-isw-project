@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
-require_once __DIR__ . "/ProspettoPDF.php";
-require_once __DIR__ . "/ProspettoLaureando.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "ProspettoPDF.php");
+require_once joinPath(__DIR__, "ProspettoLaureando.php");
 
 class ProspettoCommissione extends ProspettoPDF{
 	private array $anagraficheLaureandi;
@@ -20,7 +20,7 @@ class ProspettoCommissione extends ProspettoPDF{
 			throw new Exception("CdL non supportato");
 		}
 
-		$cdlDirectoryPath = BASE_PROSPETTI_PATH . "/" . $corso->cdlShort;
+		$cdlDirectoryPath = joinPath(BASE_PROSPETTI_PATH, $corso->cdlShort);
 
 		// Se non esiste la cartella (non ho mai generato per questo cdl) allora la creo
 		if(!is_dir($cdlDirectoryPath)){
@@ -63,7 +63,7 @@ class ProspettoCommissione extends ProspettoPDF{
 				$this->prospettoPDF->WriteHTML($paginaHtml);
 			}
 
-			$this->prospettoPDF->Output($cdlDirectoryPath . "/" . $this->cdl . "-all.pdf", "F");
+			$this->prospettoPDF->Output(joinPath($cdlDirectoryPath, $this->cdl . "-all.pdf"), "F");
 		}
 
 		if (!TEST_MODE || $matricola === "default") {
@@ -79,7 +79,7 @@ class ProspettoCommissione extends ProspettoPDF{
 		$files = array_diff(scandir($path), ['.', '..']);
 
 		foreach($files as $file){
-			$filePath = $path . '/' . $file;
+			$filePath = joinPath($path, $file);
 
 			if(is_dir($filePath)){
 				// Se è una directory, la svuoto ricorsivamente

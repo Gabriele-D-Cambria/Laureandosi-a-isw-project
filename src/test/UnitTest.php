@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
-require_once __DIR__ . "/../class/GeneratoreProspettiLaurea.php";
-require_once __DIR__ . "/../class/CarrieraLaureando.php";
-require_once __DIR__ . "/../class/CarrieraLaureandoInformatica.php";
-require_once __DIR__ . "/../class/AnagraficaLaureando.php";
+
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "..", "class", "GeneratoreProspettiLaurea.php");
+require_once joinPath(__DIR__, "..", "class", "CarrieraLaureando.php");
+require_once joinPath(__DIR__, "..", "class", "CarrieraLaureandoInformatica.php");
+require_once joinPath(__DIR__, "..", "class", "AnagraficaLaureando.php");
 
 /**
  * Classe per l'esecuzione degli unit test del sistema di generazione prospetti
@@ -22,7 +23,7 @@ class UnitTest {
         $results = [];
 
         try {
-            $expectedDataPath = TEST_REFERENCES_PATH . "/expected_output.json";
+            $expectedDataPath = joinPath(TEST_REFERENCES_PATH, "expected_output.json");
             if (!file_exists($expectedDataPath)) {
                 return [
                     "error" => true,
@@ -160,12 +161,12 @@ class UnitTest {
 
 
             $pdfName = $config['nome'] . "_" . $config['cognome'] . "_" . $matricola . ".pdf";
-            $pdfPath = TEST_OUTPUT_PATH . "/" . $config['cdl'] . "/" . $pdfName;
+            $pdfPath = joinPath(TEST_OUTPUT_PATH, $config['cdl'], $pdfName);
             $result['pdfGenerated'] = file_exists($pdfPath);
             $result['pdfGeneratedPath'] = BASE_PROSPETTI_URL . "/" . $config['cdl'] . "/" . $pdfName;
 
 
-            $refPdfPath = TEST_REFERENCES_PATH . "/" . $pdfName;
+            $refPdfPath = joinPath(TEST_REFERENCES_PATH, $pdfName);
             $result['pdfReference'] = file_exists($refPdfPath);
             $result['pdfReferencePath'] = BASE_PROSPETTI_URL . "\/references/" . $pdfName;
 
@@ -258,7 +259,7 @@ class UnitTest {
         $files = array_diff(scandir(TEST_OUTPUT_PATH), ['.', '..', 'references']);
 
         foreach ($files as $file) {
-            $filePath = TEST_OUTPUT_PATH . '/' . $file;
+            $filePath = joinPath(TEST_OUTPUT_PATH, $file);
 
             if (is_dir($filePath)) {
                 self::clearDirectory($filePath);
@@ -280,7 +281,7 @@ class UnitTest {
         $files = array_diff(scandir($path), ['.', '..']);
 
         foreach ($files as $file) {
-            $filePath = $path . '/' . $file;
+            $filePath = joinPath($path, $file);
 
             if (is_dir($filePath)) {
                 self::clearDirectory($filePath);
@@ -299,7 +300,7 @@ class UnitTest {
     public static function testEmail(string $emailTo): array {
         try {
             // Carica le aspettative
-            $expectedDataPath = TEST_REFERENCES_PATH . "/expected_output.json";
+            $expectedDataPath = joinPath(TEST_REFERENCES_PATH, "expected_output.json");
             if (!file_exists($expectedDataPath)) {
                 return [
                     "error" => true,
@@ -324,7 +325,7 @@ class UnitTest {
                 ];
             }
 
-            $logFilePath = TEST_OUTPUT_PATH . "/t-inf" . SEND_LOG_FILE_NAME;
+            $logFilePath = joinPath(TEST_OUTPUT_PATH, "t-inf") . SEND_LOG_FILE_NAME;
             if (!file_exists($logFilePath)) {
                 return [
                     "error" => true,

@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/../class/GeneratoreProspettiLaurea.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "..", "class", "GeneratoreProspettiLaurea.php");
 
 function send_error($response_code, $message): never{
 	http_response_code($response_code);
@@ -43,11 +44,11 @@ try {
 			sleep(13);
 			break;
 		case "runTests":
-			require_once __DIR__ . "/../test/UnitTest.php";
+			require_once joinPath(__DIR__, "..", "test", "UnitTest.php");
 			$esito = UnitTest::run();
 			break;
 		case "testEmail":
-			require_once __DIR__ . "/../test/UnitTest.php";
+			require_once joinPath(__DIR__, "..", "test", "UnitTest.php");
 			
 			// Valida email fornita dall'utente
 			$email = $_POST['email'] ?? '';

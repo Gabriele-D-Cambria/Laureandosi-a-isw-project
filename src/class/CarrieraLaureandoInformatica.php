@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . "/CarrieraLaureando.php";
-require_once __DIR__ . "/EsamiInformatica.php";
-require_once __DIR__ . "/EsameInformatica.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "CarrieraLaureando.php");
+require_once joinPath(__DIR__, "EsamiInformatica.php");
+require_once joinPath(__DIR__, "EsameInformatica.php");
 
 class CarrieraLaureandoInformatica extends CarrieraLaureando{
 	public bool $hasBonus = false;

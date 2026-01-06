@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
 
 class ParametroRange{
 	public function __construct(
@@ -95,7 +95,7 @@ class CalcoloReportistica{
 	}
 
 	private function loadConfig(): void{
-		$filePath = CONFIG_PATH . "/calcolo_reportistica.json";
+		$filePath = joinPath(CONFIG_PATH, "calcolo_reportistica.json");
 
 		if(!file_exists($filePath)){
 			throw new Exception("File di configurazione non trovato: " . $filePath);

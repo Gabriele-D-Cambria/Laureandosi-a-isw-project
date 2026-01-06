@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
-require_once __DIR__ . "/ProspettoCommissione.php";
-require_once __DIR__ . "/MailSender.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "ProspettoCommissione.php");
+require_once joinPath(__DIR__, "MailSender.php");
 
 class GeneratoreProspettiLaurea{
     public static function GeneraProspettoLaureando(string $cdl, string $dataLaurea, array $matricole): array{
@@ -18,7 +18,7 @@ class GeneratoreProspettiLaurea{
     }
     
     public static function AccediProspettoLaureando(string $cdl): array{
-        $path = BASE_PROSPETTI_PATH . "/" . $cdl . "/" . $cdl . "-all.pdf";
+        $path = joinPath(BASE_PROSPETTI_PATH, $cdl, $cdl . "-all.pdf");
         $url = BASE_PROSPETTI_URL . "/" . $cdl . "/" . $cdl . "-all.pdf";
 
         if(file_exists($path)){
@@ -33,7 +33,7 @@ class GeneratoreProspettiLaurea{
     }
     
     public static function InviaProspettoLaureando(string $cdl): array{
-        $directoryPath = BASE_PROSPETTI_PATH . "/" . $cdl;
+        $directoryPath = joinPath(BASE_PROSPETTI_PATH, $cdl);
         $logFilePath = $directoryPath . SEND_LOG_FILE_NAME;
 
         try{
@@ -50,11 +50,11 @@ class GeneratoreProspettiLaurea{
             $total = $fileContent["totali"];
             $associazioni = $fileContent["info"];
 
-            while($index < $total && !file_exists($directoryPath . "/" . $associazioni[$index]['fileName'])){
+            while($index < $total && !file_exists(joinPath($directoryPath, $associazioni[$index]['fileName']))){
                 ++$index;
             }
 
-            $file =  $directoryPath . "/" . $associazioni[$index]['fileName'];
+            $file = joinPath($directoryPath, $associazioni[$index]['fileName']);
             $email = $associazioni[$index]['email'];
 
             if(!$mailSender->inviaMail($email, $file)){
@@ -66,7 +66,7 @@ class GeneratoreProspettiLaurea{
             if($index === $total - 1){
                 unlink($logFilePath);
                 if (!TEST_MODE) {
-                    unlink($directoryPath . "/" . $cdl . "-all.pdf");
+                    unlink(joinPath($directoryPath, $cdl . "-all.pdf"));
                 }
             }
 

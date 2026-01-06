@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . "/UnitTest.php";
+
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "UnitTest.php");
 
 UnitTest::cleanOutputDirectory();
 

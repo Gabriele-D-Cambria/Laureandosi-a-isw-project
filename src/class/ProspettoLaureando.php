@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/ProspettoPDF.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "ProspettoPDF.php");
 
 class ProspettoLaureando extends ProspettoPDF{
 	public AnagraficaLaureando $anagrafica;
@@ -46,7 +47,7 @@ class ProspettoLaureando extends ProspettoPDF{
 
 		$nomeFile = $this->getTitoloProspetto();
 
-		$this->prospettoPDF->Output($path . "/" . $nomeFile, "F");
+		$this->prospettoPDF->Output(joinPath($path, $nomeFile), "F");
 		
 		return $html;
 	}

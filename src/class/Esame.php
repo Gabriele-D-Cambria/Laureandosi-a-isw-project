@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . "/CalcoloReportistica.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
+require_once joinPath(__DIR__, "CalcoloReportistica.php");
 
 class Esame{
 	private static ?int $lode = null;

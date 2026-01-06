@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . "/../includes/definitions.php";
+require_once  implode(DIRECTORY_SEPARATOR, [__DIR__, '..', 'includes',"definitions.php"]);
 
 class EsamiInformatica{
 	private static ?EsamiInformatica $instance = null;
@@ -20,7 +20,7 @@ class EsamiInformatica{
 	}
 
 	private function loadConfig(): void{
-		$filePath = CONFIG_PATH . "/esami_inf.json";
+		$filePath = joinPath(CONFIG_PATH, "esami_inf.json");
 
 		if(!file_exists($filePath)){
 			throw new Exception("File di configurazione non trovato: " . $filePath);
