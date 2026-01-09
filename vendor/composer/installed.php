@@ -3,7 +3,7 @@
         'name' => 'gabrieledc/progetto',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '54526a3ef198045064e2884868397b0436933276',
+        'reference' => '8c2b71e05861b0d2d46be12911e384a302712850',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'gabrieledc/progetto' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '54526a3ef198045064e2884868397b0436933276',
+            'reference' => '8c2b71e05861b0d2d46be12911e384a302712850',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
