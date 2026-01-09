@@ -6,6 +6,12 @@
         "phpmailer/phpmailer": "^7.0",
         "mpdf/mpdf": "^8.2"
     },
+    "config": {
+        "platform": {
+            "php" : "8.4.10",
+            "ext-gd": "1"
+        }
+    },
     "autoload": {
         "psr-4": {
             "Gabrieledc\\Progetto\\": "src/"
