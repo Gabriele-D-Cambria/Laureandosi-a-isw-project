@@ -74,7 +74,8 @@ function createResultRow(result) {
     
     if (result.shouldFail) {
         row.className = 'test-row-should-fail';
-    } else {
+    } 
+    else {
         row.className = (result.overallPass) ? 'test-row-pass' : 'test-row-fail';
     }
 
@@ -87,7 +88,8 @@ function createResultRow(result) {
     const cellNome = document.createElement('td');
     if (result.shouldFail) {
         cellNome.innerHTML = `${result.nome} ${result.cognome} <br><span class="badge-should-fail">(fallimento atteso)</span>`;
-    } else {
+    } 
+    else {
         cellNome.innerHTML = `${result.nome} ${result.cognome}`;
     }
     row.appendChild(cellNome);
@@ -240,7 +242,8 @@ async function testEmail() {
         if (data.error) {
             resultDiv.className = 'email-result error';
             resultDiv.innerHTML = `Errore: ${data.message}`;
-        } else {
+        } 
+        else {
             resultDiv.className = 'email-result success';
             resultDiv.innerHTML = `
                 Email inviata con successo<br>

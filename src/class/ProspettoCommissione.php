@@ -85,7 +85,8 @@ class ProspettoCommissione extends ProspettoPDF{
 				// Se è una directory, la svuoto ricorsivamente
 				$this->clearDirectory($filePath);
 				rmdir($filePath);
-			} else {
+			} 
+			else {
 				// Se è un file, lo elimino
 				unlink($filePath);
 			}

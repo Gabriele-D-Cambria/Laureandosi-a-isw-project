@@ -50,7 +50,7 @@ try {
 		case "testEmail":
 			require_once joinPath(__DIR__, "..", "test", "UnitTest.php");
 			
-			// Valida email fornita dall'utente
+			// Valido la mail fornita dall'utente
 			$email = $_POST['email'] ?? '';
 			if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 				send_error(400, ["error" => true, "message" => "Email non valida"]);

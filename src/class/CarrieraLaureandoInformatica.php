@@ -46,8 +46,6 @@ class CarrieraLaureandoInformatica extends CarrieraLaureando{
 				new Esame($esameJSON, !is_numeric(array_search($esameJSON["DES"], $fileFiltroEsami['no-avg'])));
 		}
 
-		//* Controllo l'eventuale bonus
-
 		$this->checkBonus();
 
 		$cfuInf = 0;

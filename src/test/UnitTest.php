@@ -195,7 +195,8 @@ class UnitTest {
     private static function createCarriera(int $matricola, string $cdl, string $dataLaurea): CarrieraLaureando|CarrieraLaureandoInformatica {
         if ($cdl === 't-inf') {
             return new CarrieraLaureandoInformatica($matricola, $cdl, $dataLaurea);
-        } else {
+        } 
+        else {
             return new CarrieraLaureando($matricola, $cdl, $dataLaurea);
         }
     }
@@ -264,7 +265,8 @@ class UnitTest {
             if (is_dir($filePath)) {
                 self::clearDirectory($filePath);
                 rmdir($filePath);
-            } else {
+            } 
+            else {
                 unlink($filePath);
             }
         }
@@ -286,7 +288,8 @@ class UnitTest {
             if (is_dir($filePath)) {
                 self::clearDirectory($filePath);
                 rmdir($filePath);
-            } else {
+            } 
+            else {
                 unlink($filePath);
             }
         }

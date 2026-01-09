@@ -23,7 +23,6 @@ function getFormData() {
 	const dataLaurea = document.getElementById("dataLaurea").value;
 	const matricoleText = document.getElementById("matricole").value;
 
-	// Separa per newline e virgola, rimuove spazi e converte in numeri
 	const matricole = matricoleText
 		.split(/[\n, ]+/)
 		.map(m => m.trim())

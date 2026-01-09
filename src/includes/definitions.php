@@ -29,29 +29,25 @@ function getBaseUrl(): string {
     // Questo file è in src/includes/, quindi il root del progetto è 2 livelli sopra
     $projectRoot = realpath(__DIR__ . '/../..');
     
-    // Ottieni il document root del server (normalizzato)
+    // Ottengo il document root del server (normalizzato)
     $documentRoot = !empty($_SERVER['DOCUMENT_ROOT']) ? realpath($_SERVER['DOCUMENT_ROOT']) : '';
     
-    // Calcola il percorso relativo dall'URL base
+    // Calcolo il percorso relativo dall'URL base
     if (!empty($documentRoot) && $projectRoot && strpos($projectRoot, $documentRoot) === 0) {
-        // Calcola il percorso relativo
         $basePath = substr($projectRoot, strlen($documentRoot));
-        $basePath = str_replace('\\', '/', $basePath); // Windows compatibility
+        $basePath = str_replace('\\', '/', $basePath);
         $basePath = rtrim($basePath, '/');
     } 
     else {
-        // Fallback: usa SCRIPT_NAME per dedurre il percorso base
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? $_SERVER['PHP_SELF'] ?? '';
         if (!empty($scriptName)) {
-            // Se lo script è index.php nella root, il basePath è la directory dello script
-            // Se lo script è in src/API/requestHandler.php, dobbiamo risalire
             $scriptDir = dirname($scriptName);
             
-            // Rimuovi /src/includes, /src/API, ecc. per arrivare alla root
+            // Se è index.php è la directory, se è in src/ devo risalire
             $basePath = preg_replace('#/src(/.*)?$#', '', $scriptDir);
             $basePath = rtrim($basePath, '/');
-        } else {
-            // Ultimo fallback: basePath vuoto (root del server)
+        } 
+        else {
             $basePath = '';
         }
     }
