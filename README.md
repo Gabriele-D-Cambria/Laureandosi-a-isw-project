@@ -82,50 +82,50 @@
 
 ## Requisiti Non Funzionali
 
-N01) Il Sistema deve essere sviluppato in PHP su IDE Phpstorm
-N02) Il Sistema deve essere messo in produzione su ambiente WordPress
-N03) Il Sistema non deve contenere file personali nel codice né file di configurazione
-N04) Il Sistema deve conservare i dati solo per lo stretto necessario (Norma GDPR)
-N05) Il Sistema deve essere protetto da accessi non autorizzati
-N06) Il Sistema deve essere portabile su altri computer con il medesimo ambiente di sviluppo e produzione
-N07) Il Sistema deve avere un manuale di installazione d'uso e di produzione
+1) Il Sistema deve essere sviluppato in PHP su IDE Phpstorm
+2) Il Sistema deve essere messo in produzione su ambiente WordPress
+3) Il Sistema non deve contenere file personali nel codice né file di configurazione
+4) Il Sistema deve conservare i dati solo per lo stretto necessario (Norma GDPR)
+5) Il Sistema deve essere protetto da accessi non autorizzati
+6) Il Sistema deve essere portabile su altri computer con il medesimo ambiente di sviluppo e produzione
+7) Il Sistema deve avere un manuale di installazione d'uso e di produzione
 
 ## Requisiti Funzionali (Must)
 
-M01) Il Sistema deve prelevare l'anagrafica del laureando dal Sistema di Gestione Carriera Studente
-M02) Il Sistema deve prelevare la carriera del laureando dal Sistema di Gestione Carriera Studente
-M03) Il Sistema deve consentire all'unità didattica di generare un prospetto di laurea con tutti laureandi per la commissione. La prima pagina segue il formato in figura 0, le altre i formati indicati in figura 1 e/o figura 2
-M04) Il Sistema, ad ogni nuova generazione, deve eliminare i prospetti generati
-M05) Il Sistema deve consentire all'unità didattica di generare un prospetto di laurea per ogni laureando secondo il formato indicato in figura 3
-M06) Il Sistema deve fornire un modo all'unità didattica per accedere al prospetto di laurea dei laureandi per la commissione
-M07) Il Sistema deve consentire all'unità didattica di inviare a ciascun laureando il proprio prospetto di laurea tramite email. Il formato è quello indicato in figura 4
-M08) Il Sistema deve fornire una interfaccia grafica all'unità didattica, secondo la figura 5
-M09) Il Sistema deve fare riferimento ad un file di configurazione
-M10) Il Sistema deve consentire all'amministratore di aggiungere un nuovo corso di laurea tramite il file di configurazione
-M11) Il Sistema deve consentire all'amministratore di configurare i parametri di calcolo e reportistica tramite il file di configurazione
-M12) Il Sistema deve consentire all'amministratore di configurare un filtro per esami tramite il file di configurazione
-M13) Il Sistema deve consentire all'amministratore di configurare gli esami informatici tramite il file di configurazione
-M14) Il Sistema deve consentire all'amministratore di configurare le note per la commissione tramite il file di configurazione
-M15) Il Sistema deve effettuare i calcoli dei prospetti a partire dalle formule indicate nella figura 6
-M16) Il Sistema deve consentire all'amministratore di configurare come considerare il voto 30L tramite il file di configurazione
-M17) Il Sistema deve indicare con 0 le valutazioni delle materie che non fanno media
-M18) Il Sistema deve considerare 0 il voto di tesi T ai fini del calcolo del prospetto qualora la formula lo prevedesse
-M19) Il Sistema deve inserire una nota finale per ogni prospetto commissione che comunica al relatore come calcolare in definitiva il voto di tesi
+1) Il Sistema deve prelevare l'anagrafica del laureando dal Sistema di Gestione Carriera Studente
+2) Il Sistema deve prelevare la carriera del laureando dal Sistema di Gestione Carriera Studente
+3) Il Sistema deve consentire all'unità didattica di generare un prospetto di laurea con tutti laureandi per la commissione. La prima pagina segue il formato in figura 0, le altre i formati indicati in figura 1 e/o figura 2
+4) Il Sistema, ad ogni nuova generazione, deve eliminare i prospetti generati
+5) Il Sistema deve consentire all'unità didattica di generare un prospetto di laurea per ogni laureando secondo il formato indicato in figura 3
+6) Il Sistema deve fornire un modo all'unità didattica per accedere al prospetto di laurea dei laureandi per la commissione
+7) Il Sistema deve consentire all'unità didattica di inviare a ciascun laureando il proprio prospetto di laurea tramite email. Il formato è quello indicato in figura 4
+8) Il Sistema deve fornire una interfaccia grafica all'unità didattica, secondo la figura 5
+9) Il Sistema deve fare riferimento ad un file di configurazione
+0) Il Sistema deve consentire all'amministratore di aggiungere un nuovo corso di laurea tramite il file di configurazione
+1) Il Sistema deve consentire all'amministratore di configurare i parametri di calcolo e reportistica tramite il file di configurazione
+2) Il Sistema deve consentire all'amministratore di configurare un filtro per esami tramite il file di configurazione
+3) Il Sistema deve consentire all'amministratore di configurare gli esami informatici tramite il file di configurazione
+4) Il Sistema deve consentire all'amministratore di configurare le note per la commissione tramite il file di configurazione
+5) Il Sistema deve effettuare i calcoli dei prospetti a partire dalle formule indicate nella figura 6
+6) Il Sistema deve consentire all'amministratore di configurare come considerare il voto 30L tramite il file di configurazione
+7) Il Sistema deve indicare con 0 le valutazioni delle materie che non fanno media
+8) Il Sistema deve considerare 0 il voto di tesi T ai fini del calcolo del prospetto qualora la formula lo prevedesse
+9) Il Sistema deve inserire una nota finale per ogni prospetto commissione che comunica al relatore come calcolare in definitiva il voto di tesi
 
 ## Requisiti Funzionali (Should)
 
-S01) Il Sistema dovrebbe consentire all'amministratore la possibilità di configurare il valore della lode
-S02) Il Sistema dovrebbe consentire la cancellazione di tutti i dati relativi all'appello di laurea
+1) Il Sistema dovrebbe consentire all'amministratore la possibilità di configurare il valore della lode
+2) Il Sistema dovrebbe consentire la cancellazione di tutti i dati relativi all'appello di laurea
 
 ## Requisiti Funzionali (Could)
 
-C01) Il Sistema potrebbe consentire all'unità didattica di proseguire l'invio dei prospetti di laurea dopo una interruzione
-C02) Il Sistema potrebbe fornire una interfaccia grafica all'amministratore per accedere ai file di configurazione
+1) Il Sistema potrebbe consentire all'unità didattica di proseguire l'invio dei prospetti di laurea dopo una interruzione
+2) Il Sistema potrebbe fornire una interfaccia grafica all'amministratore per accedere ai file di configurazione
 
 ## Requisiti Funzionali (Want)
 
-W01) Il Sistema vorrebbe consentire all'unità didattica di ricevere una email con la conferma di invio dei prospetti
-W02) Il Sistema vorrebbe consentire all'unità didattica di generare un prospetto con le statistiche dell'appello di laurea
+1) Il Sistema vorrebbe consentire all'unità didattica di ricevere una email con la conferma di invio dei prospetti
+2) Il Sistema vorrebbe consentire all'unità didattica di generare un prospetto con le statistiche dell'appello di laurea
 
 ---
 
